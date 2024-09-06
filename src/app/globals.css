@@ -7,12 +7,12 @@
   --foreground: #171717;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
+} */
 
 body {
   color: var(--foreground);
@@ -24,4 +24,50 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+.heading {
+  font-weight: bold;
+  font-size: 30px;
+}
+
+.subheading {
+  font-weight: bold;
+}
+
+.form-label {
+  margin-right: 10px;
+}
+
+.border-bottom {
+  border-bottom: 1px solid black;
+}
+
+form label {
+  width: 120px;
+  font-weight: bold;
+}
+
+.divider {
+  border-bottom: 2px solid lightgrey;
+  margin: 15px;
+}
+
+input, textarea {
+  border: 1px solid rgb(229, 231, 235);
+  padding: 2px 8px 2px 8px;
+  border-radius: 5px;
+}
+
+textarea {
+  display: block;
+  width: 100%;
+}
+
+form button.save {
+  width: 100%;
+  background-color: rgb(179, 255, 0);
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: bold;
 }
