@@ -20,6 +20,28 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.add-humor {
+  font-size: 14px;
+  width: 100%;
+  background-color: rgb(179, 228, 255);
+  padding: 5px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+.uuid-item {
+  border-radius: 10px;
+  padding: 5px 10px;
+}
+
+.uuid-item:nth-child(odd) {
+  background-color: rgb(228, 228, 228);
+}
+
+.uuid-item:nth-child(even) {
+  background-color: rgb(171, 171, 171);
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -32,7 +54,9 @@ body {
 }
 
 .subheading {
+  display: block;
   font-weight: bold;
+  margin-bottom: 10px;
 }
 
 .form-label {
@@ -43,7 +67,7 @@ body {
   border-bottom: 1px solid black;
 }
 
-form label {
+.form label {
   width: 120px;
   font-weight: bold;
 }
@@ -64,10 +88,44 @@ textarea {
   width: 100%;
 }
 
-form button.save {
+.form button.save {
   width: 100%;
-  background-color: rgb(179, 255, 0);
   padding: 10px;
   border-radius: 10px;
   font-weight: bold;
+}
+
+.form button.save.create {
+  background-color: rgb(179, 228, 255);
+}
+
+.form button.save.update {
+  background-color: rgb(179, 255, 0);
+}
+
+.form button.add-to-context-list {
+  width: 100%;
+  background-color: rgb(179, 228, 255);
+  padding: 5px;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.context-list-row {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  margin-bottom: 20px;
+}
+
+.context-list-row textarea {
+  margin: 0;
+}
+
+.context-list-row button {
+  margin-left: 50px;
+  padding: 20px;
+  background-color: rgb(255, 73, 73);
+  border-radius: 10px;
 }

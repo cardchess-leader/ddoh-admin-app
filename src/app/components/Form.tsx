@@ -7,41 +7,28 @@ import { HumorCategoryList, Humor, HumorDataKey } from '../util';
 import Dropdown from "./Dropdown";
 
 interface SimpleFormProps {
+    actionName: string;
     humorFormData: Humor;
     updateHumorFormData: (key: HumorDataKey, value: string | number, arg?: string | number) => void
+    handleSubmit: () => void;
 }
 
 
-const SimpleForm: React.FC<SimpleFormProps> = ({ humorFormData, updateHumorFormData }) => {
-    // const [formData, setFormData] = useState({
-    //     author: '', // empty string will be treated as null, vise versa
-    //     category: HumorCategoryList[0],
-    //     context: '',
-    //     context_list: [], // empty list will be treated as null, vise versa
-    //     created_date: '',
-    //     index: 0,
-    //     punchline: '', // empty string will be treated as null, vise versa
-    //     sender: 'Board Collie',
-    //     source: 'Daily Dose of Humors',
-    //     uuid: '',
-    // });
+const SimpleForm: React.FC<SimpleFormProps> = ({ actionName, humorFormData, updateHumorFormData, handleSubmit }) => {
+    console.log('humorFormData is: ', humorFormData);
 
-    // const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    //     const { name, value } = e.target;
-    //     setFormData(prevState => ({
-    //         ...prevState,
-    //         [name]: value,
-    //     }));
+    // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    //     e.preventDefault();
+    //     // console.log('Form Data:', formData);
+    //     // You can handle form submission here (e.g., send data to an API)
     // };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        // console.log('Form Data:', formData);
-        // You can handle form submission here (e.g., send data to an API)
+    const _handleSubmit = () => {
+        handleSubmit();
     };
 
     return (
-        <form onSubmit={handleSubmit} className="border rounded shadow-sm">
+        <div className="form border rounded shadow-sm">
             <div className="mb-3 p-4 flex">
                 <label htmlFor="uuid" className="form-label">
                     uuid
@@ -66,7 +53,8 @@ const SimpleForm: React.FC<SimpleFormProps> = ({ humorFormData, updateHumorFormD
                     className="form-control flex-1"
                     id="index"
                     name="index"
-                    value={humorFormData.index}
+                    value={humorFormData.index.toString()}
+                    onChange={e => updateHumorFormData('index', e.target.value)}
                     required
                 />
             </div>
@@ -101,17 +89,23 @@ const SimpleForm: React.FC<SimpleFormProps> = ({ humorFormData, updateHumorFormD
                 </label>
                 <div className="flex-1">
                     {humorFormData.context_list?.map((contextListItem, index) => (
-                        <textarea
-                            key={index} // Adding a unique key for each textarea
-                            className="form-control mb-3"
-                            id={`context_list#${index}`} // Making the id unique or omit if not needed
-                            name={`context_list#${index}`} // Optionally use unique names as well
-                            value={contextListItem}
-                            //   onChange={(e) => handleChange(e, index)} // Assuming handleChange needs to track the index
-                            rows={3}
-                            required
-                        />
+                        <div className='context-list-row flex'>
+                            <textarea
+                                key={index} // Adding a unique key for each textarea
+                                className="form-control mb-3"
+                                id={`context_list#${index}`} // Making the id unique or omit if not needed
+                                name={`context_list#${index}`} // Optionally use unique names as well
+                                value={contextListItem}
+                                  onChange={(e) => updateHumorFormData('context_list', e.target.value, index)} // Assuming handleChange needs to track the index
+                                rows={3}
+                                required
+                            />
+                            <button onClick={e => updateHumorFormData('context_list', index, 'remove')}>Remove</button>
+                        </div>
                     ))}
+                    <button className="btn btn-primary add-to-context-list" onClick={e => updateHumorFormData('context_list', '', 'add')}>
+                        Add To Context List
+                    </button>
                 </div>
             </div>
             <div className="divider"></div>
@@ -190,11 +184,11 @@ const SimpleForm: React.FC<SimpleFormProps> = ({ humorFormData, updateHumorFormD
             </div>
             <div className="divider"></div>
             <div className="p-4">
-                <button className="btn btn-primary save">
-                    Save
+                <button className={`btn btn-primary save ${actionName}`} onClick={handleSubmit}>
+                    {actionName.toUpperCase()}
                 </button>
             </div>
-        </form>
+        </div>
     );
 };
 

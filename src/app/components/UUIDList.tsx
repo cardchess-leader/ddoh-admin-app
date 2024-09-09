@@ -8,14 +8,14 @@ import { Humor } from '../util';
 
 interface UUIDListProps {
   humorList: Humor[];
-  setHumorFormData: (humor: Humor) => void
+  setFromExistingHumor: (humor: Humor) => void
 }
 
-const UUIDList: React.FC<UUIDListProps> = ({ humorList, setHumorFormData }) => {
+const UUIDList: React.FC<UUIDListProps> = ({ humorList, setFromExistingHumor }) => {
   return (
     <List>
       {humorList.map((humor) => (
-        <ListItem key={humor.uuid} component="button" onClick={() => setHumorFormData(humor)}>
+        <ListItem className='uuid-item' key={humor.uuid} component="button" onClick={() => setFromExistingHumor(humor)}>
           <ListItemText primary={humor.uuid} />
         </ListItem>
       ))}
