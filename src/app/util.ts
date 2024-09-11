@@ -1,4 +1,4 @@
-const isProduction = false; // Set this to false for debugging
+const isProduction = true; // Set this to false for debugging
 
 const HumorCategoryList = [
     "DAD_JOKES",
@@ -43,19 +43,6 @@ interface Humor {
     uuid: string,
   }
 
-interface HumorDB {
-  author: string | null,
-  category: HumorCategory,
-  context: string,
-  context_list: string[] | null,
-  created_date: DateString, // should be in format of yyyy-mm-dd
-  index: number,
-  punchline: string | null,
-  sender: string,
-  source: string,
-  uuid: string,
-  }
-
 const defaultHumor: Humor = {
   author: '', // empty string will be treated as null, vise versa
   category: HumorCategoryList[0],
@@ -79,5 +66,22 @@ function formatDateToYYYYMMDD(date: Date): string {
   return `${year}-${month}-${day}`; // Format as 'yyyy-mm-dd'
 }
 
-export { HumorCategoryList, firebaseFunctionUrl, defaultHumor, formatDateToYYYYMMDD };
+function validateHumor(humor: Humor): string[] {
+  const invalid_fields = [];
+  if (humor.context.trim() === '') {
+    invalid_fields.push('context');
+  }
+  if (humor.sender.trim() === '') {
+    invalid_fields.push('sender');
+  }
+  if (humor.source.trim() === '') {
+    invalid_fields.push('source');
+  }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(humor.created_date)) {
+    invalid_fields.push('created_date');
+  }
+  return invalid_fields;
+}
+
+export { HumorCategoryList, firebaseFunctionUrl, defaultHumor, formatDateToYYYYMMDD, validateHumor };
 export type { Humor, HumorDataKey };

@@ -16,6 +16,8 @@ const HomePage: React.FC = () => {
   const [humorList, setHumorList] = useState<Humor[] | null>(null)
   const [humorFormData, setHumorFormData] = useState<Humor | null>(null);
   const [submitType, setSubmitType] = useState<'update' | 'create' | null>(null);
+  const [isHttpRunning, setIsHttpRunning] = useState<boolean>(false); 
+  const [httpMessage, setHttpMessage] = useState<string>('');
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date); // this is set
@@ -70,27 +72,34 @@ const HomePage: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
+      setIsHttpRunning(true);
+      let requestUrl = '';
+      if (submitType === 'update') {
+        requestUrl = `${firebaseFunctionUrl}/updateDailyHumors`;
+      } else {
+        requestUrl = `${firebaseFunctionUrl}/addDailyHumors`;
+      }
       const response = await fetch(
-        `${firebaseFunctionUrl}/updateDailyHumors`,
+        requestUrl,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({...humorFormData, date: formatDateToYYYYMMDD(selectedDate || new Date())}),
+          body: JSON.stringify({...humorFormData!, date: formatDateToYYYYMMDD(selectedDate || new Date())}),
         }
       );
-
       if (response.ok) {
         const data = await response.json();
-        console.log('data is: ', data);
-        // setUuids(data.humorList.map((humor: { id: string }) => humor.id));
-        setHumorList(data.humorList.map((humor: Humor) => humor));
+        setHttpMessage(data.message);
+        setSubmitType('update');
       } else {
-        console.error("Failed to fetch UUIDs");
+        console.error(`${submitType} operation Failed`);
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error(`${submitType} operation Failed`, error);
+    } finally {
+      setIsHttpRunning(false);
     }
   }
 
@@ -98,26 +107,25 @@ const HomePage: React.FC = () => {
     console.log('fetchUuid');
     if (category && selectedDate) {
       try {
+        setHumorList(null);
+        setIsHttpRunning(true);
         const response = await fetch(
           `${firebaseFunctionUrl}/getDailyHumors?category=${category}&date=${formatDateToYYYYMMDD(selectedDate)}`
         );
         if (response.ok) {
           const data = await response.json();
           console.log('data is: ', data);
-          // setUuids(data.humorList.map((humor: { id: string }) => humor.id));
           setHumorList(data.humorList.map((humor: Humor) => humor));
         } else {
           console.error("Failed to fetch UUIDs");
         }
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setIsHttpRunning(false);
       }
     }
   };
-
-  // useEffect(() => {
-  //   fetchUuids();
-  // }, [selectedDate, selectedCategory]);
 
   return (
     <Container maxWidth="md">
@@ -136,20 +144,24 @@ const HomePage: React.FC = () => {
           <Dropdown options={HumorCategoryList} onCategoryChange={handleCategoryChange} selectedDropdownValue={selectedCategory} />
           <br />
         </Box>}
-      {humorList && 
+      {selectedDate && selectedCategory &&
         <Box mb={4}>
-          <span className="subheading">Select Humors</span>
+          <span className="subheading">Select Humors</span><button id='refresh' onClick={() => fetchUuids(selectedCategory || '')}>&#x1F503;</button>
           <div>
             <button className="add-humor" onClick={createNewHumor}>Add Humor</button>
-            <UUIDList humorList={humorList} setFromExistingHumor={setFromExistingHumor} />
+            {!humorList && "Loading Humor List..."}
+            {humorList && <UUIDList humorList={humorList} setFromExistingHumor={setFromExistingHumor} />}
           </div>
           <br />
         </Box>}
       {submitType && 
         <Box mb={4}>
           <span className="subheading">Update/Add Humor Details</span>
-          {humorFormData != null && <SimpleForm actionName={submitType ?? 'create'} humorFormData={humorFormData} updateHumorFormData={updateHumorFormData} handleSubmit={handleSubmit}/>}
+          {humorFormData != null && <SimpleForm actionName={submitType ?? 'create'} humorFormData={humorFormData} updateHumorFormData={updateHumorFormData} handleSubmit={handleSubmit} isHttpRunning={isHttpRunning}/>}
         </Box>}
+      <div>
+        {httpMessage}
+      </div>
     </Container>
   );
 };

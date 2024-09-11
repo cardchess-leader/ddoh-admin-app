@@ -3,7 +3,7 @@
 
 // import React, { useState } from 'react';
 import React from 'react';
-import { HumorCategoryList, Humor, HumorDataKey } from '../util';
+import { HumorCategoryList, Humor, HumorDataKey, validateHumor } from '../util';
 import Dropdown from "./Dropdown";
 
 interface SimpleFormProps {
@@ -11,27 +11,18 @@ interface SimpleFormProps {
     humorFormData: Humor;
     updateHumorFormData: (key: HumorDataKey, value: string | number, arg?: string | number) => void
     handleSubmit: () => void;
+    isHttpRunning: boolean;
 }
 
 
-const SimpleForm: React.FC<SimpleFormProps> = ({ actionName, humorFormData, updateHumorFormData, handleSubmit }) => {
+const SimpleForm: React.FC<SimpleFormProps> = ({ actionName, humorFormData, updateHumorFormData, handleSubmit, isHttpRunning }) => {
     console.log('humorFormData is: ', humorFormData);
-
-    // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    //     e.preventDefault();
-    //     // console.log('Form Data:', formData);
-    //     // You can handle form submission here (e.g., send data to an API)
-    // };
-
-    const _handleSubmit = () => {
-        handleSubmit();
-    };
-
+    const invalid_field_list = validateHumor(humorFormData);
     return (
         <div className="form border rounded shadow-sm">
             <div className="mb-3 p-4 flex">
                 <label htmlFor="uuid" className="form-label">
-                    uuid
+                    Uuid
                 </label>
                 <input
                     type="text"
@@ -70,7 +61,7 @@ const SimpleForm: React.FC<SimpleFormProps> = ({ actionName, humorFormData, upda
             <div className="divider"></div>
             <div className="mb-3 p-4 flex">
                 <label htmlFor="context" className="form-label">
-                    Context
+                    Context {invalid_field_list.includes('context') && <span style={{color: 'red'}}>*</span>}
                 </label>
                 <textarea
                     className="form-control flex-1"
@@ -89,9 +80,8 @@ const SimpleForm: React.FC<SimpleFormProps> = ({ actionName, humorFormData, upda
                 </label>
                 <div className="flex-1">
                     {humorFormData.context_list?.map((contextListItem, index) => (
-                        <div className='context-list-row flex'>
+                        <div key={index} className='context-list-row flex'>
                             <textarea
-                                key={index} // Adding a unique key for each textarea
                                 className="form-control mb-3"
                                 id={`context_list#${index}`} // Making the id unique or omit if not needed
                                 name={`context_list#${index}`} // Optionally use unique names as well
@@ -100,10 +90,10 @@ const SimpleForm: React.FC<SimpleFormProps> = ({ actionName, humorFormData, upda
                                 rows={3}
                                 required
                             />
-                            <button onClick={e => updateHumorFormData('context_list', index, 'remove')}>Remove</button>
+                            <button onClick={() => updateHumorFormData('context_list', index, 'remove')}>Remove</button>
                         </div>
                     ))}
-                    <button className="btn btn-primary add-to-context-list" onClick={e => updateHumorFormData('context_list', '', 'add')}>
+                    <button className="btn btn-primary add-to-context-list" onClick={() => updateHumorFormData('context_list', '', 'add')}>
                         Add To Context List
                     </button>
                 </div>
@@ -125,7 +115,7 @@ const SimpleForm: React.FC<SimpleFormProps> = ({ actionName, humorFormData, upda
             </div>
             <div className="mb-3 p-4 flex">
                 <label htmlFor="created_date" className="form-label">
-                    Created Date
+                    Created Date {invalid_field_list.includes('created_date') && <span style={{color: 'red'}}>*</span>}
                 </label>
                 <input
                     type="text"
@@ -155,7 +145,7 @@ const SimpleForm: React.FC<SimpleFormProps> = ({ actionName, humorFormData, upda
             <div className="divider"></div>
             <div className="mb-3 p-4 flex">
                 <label htmlFor="sender" className="form-label">
-                    Sender
+                    Sender {invalid_field_list.includes('sender') && <span style={{color: 'red'}}>*</span>}
                 </label>
                 <input
                     type="text"
@@ -170,7 +160,7 @@ const SimpleForm: React.FC<SimpleFormProps> = ({ actionName, humorFormData, upda
             <div className="divider"></div>
             <div className="mb-3 p-4 flex">
                 <label htmlFor="source" className="form-label">
-                    Source
+                    Source {invalid_field_list.includes('source') && <span style={{color: 'red'}}>*</span>}
                 </label>
                 <input
                     type="text"
@@ -184,8 +174,8 @@ const SimpleForm: React.FC<SimpleFormProps> = ({ actionName, humorFormData, upda
             </div>
             <div className="divider"></div>
             <div className="p-4">
-                <button className={`btn btn-primary save ${actionName}`} onClick={handleSubmit}>
-                    {actionName.toUpperCase()}
+                <button className={`btn btn-primary save ${actionName}`} onClick={handleSubmit} disabled={isHttpRunning || invalid_field_list.length > 0}>
+                    {isHttpRunning ? 'Please Wait...' : actionName.toUpperCase()}
                 </button>
             </div>
         </div>

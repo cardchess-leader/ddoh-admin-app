@@ -31,15 +31,16 @@ body {
 
 .uuid-item {
   border-radius: 10px;
-  padding: 5px 10px;
+  padding: 2.5px 10px;
+  margin-bottom: 5px;
 }
 
 .uuid-item:nth-child(odd) {
-  background-color: rgb(228, 228, 228);
+  background-color: rgb(240, 240, 240);
 }
 
 .uuid-item:nth-child(even) {
-  background-color: rgb(171, 171, 171);
+  background-color: rgb(200, 200, 200);
 }
 
 @layer utilities {
@@ -54,7 +55,7 @@ body {
 }
 
 .subheading {
-  display: block;
+  display: inline-block;
   font-weight: bold;
   margin-bottom: 10px;
 }
@@ -95,6 +96,10 @@ textarea {
   font-weight: bold;
 }
 
+.form button.save:disabled {
+  opacity: 50%;
+}
+
 .form button.save.create {
   background-color: rgb(179, 228, 255);
 }
@@ -128,4 +133,14 @@ textarea {
   padding: 20px;
   background-color: rgb(255, 73, 73);
   border-radius: 10px;
+}
+
+input:read-only {
+  background-color: rgb(245, 245, 245);
+}
+
+#refresh {
+  margin-left: 10px;
+  border-radius: 10px;
+  font-size: 20px;
 }
