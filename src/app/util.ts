@@ -84,4 +84,4 @@ function validateHumor(humor: Humor): string[] {
 }
 
 export { HumorCategoryList, firebaseFunctionUrl, defaultHumor, formatDateToYYYYMMDD, validateHumor };
-export type { Humor, HumorDataKey };
+export type { Humor, HumorDataKey, HumorCategory };
