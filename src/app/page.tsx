@@ -3,6 +3,7 @@
 
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import bcrypt from "bcryptjs";
 import { Container, Typography, Box } from "@mui/material";
 import CalendarComponent from "./components/Calendar"; // Correct relative path
 import Dropdown from "./components/Dropdown";
@@ -11,12 +12,13 @@ import SimpleForm from "./components/Form";
 import { HumorCategoryList, firebaseFunctionUrl, HumorDataKey, defaultHumor, Humor, formatDateToYYYYMMDD } from './util';
 
 const HomePage: React.FC = () => {
+  const [password, setPassword] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [humorList, setHumorList] = useState<Humor[] | null>(null)
   const [humorFormData, setHumorFormData] = useState<Humor | null>(null);
   const [submitType, setSubmitType] = useState<'update' | 'create' | null>(null);
-  const [isHttpRunning, setIsHttpRunning] = useState<boolean>(false); 
+  const [isHttpRunning, setIsHttpRunning] = useState<boolean>(false);
   const [httpMessage, setHttpMessage] = useState<string>('');
 
   const handleDateChange = (date: Date | null) => {
@@ -41,7 +43,7 @@ const HomePage: React.FC = () => {
   }
 
   const createNewHumor = () => {
-    setHumorFormData({...defaultHumor, uuid: uuidv4(), index: humorList?.length || 0}); // this is set
+    setHumorFormData({ ...defaultHumor, uuid: uuidv4(), index: humorList?.length || 0, created_date: formatDateToYYYYMMDD(new Date()), }); // this is set
     setSubmitType('create'); // this is set
   }
 
@@ -79,6 +81,7 @@ const HomePage: React.FC = () => {
       } else {
         requestUrl = `${firebaseFunctionUrl}/addDailyHumors`;
       }
+      const passwordHash = await bcrypt.hash(password, 10);
       const response = await fetch(
         requestUrl,
         {
@@ -86,7 +89,7 @@ const HomePage: React.FC = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({...humorFormData!, date: formatDateToYYYYMMDD(selectedDate || new Date())}),
+          body: JSON.stringify({ ...humorFormData!, date: formatDateToYYYYMMDD(selectedDate || new Date()), passwordHash }),
         }
       );
       if (response.ok) {
@@ -95,9 +98,11 @@ const HomePage: React.FC = () => {
         setSubmitType('update');
       } else {
         console.error(`${submitType} operation Failed`);
+        setHttpMessage(response.statusText);
       }
     } catch (error) {
       console.error(`${submitType} operation Failed`, error);
+      setHttpMessage(`${submitType} operation Failed, ${error}`);
     } finally {
       setIsHttpRunning(false);
     }
@@ -133,35 +138,45 @@ const HomePage: React.FC = () => {
         <span className="heading">Daily Dose of Humors Admin App</span>
       </Typography>
       <br />
-      <Box mb={4}>
-        <span className="subheading">Select Date</span>
-        <CalendarComponent onDateChange={handleDateChange} />
-        <br />
-      </Box>
-      {selectedDate &&
-        <Box mb={4}>
-          <span className="subheading">Choose Category</span>
-          <Dropdown options={HumorCategoryList} onCategoryChange={handleCategoryChange} selectedDropdownValue={selectedCategory} />
-          <br />
-        </Box>}
-      {selectedDate && selectedCategory &&
-        <Box mb={4}>
-          <span className="subheading">Select Humors</span><button id='refresh' onClick={() => fetchUuids(selectedCategory || '')}>&#x1F503;</button>
+          <Box mb={4}>
+            <span className="subheading">Enter Password</span>
+              <input
+                type="password"
+                className="form-control flex-1"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+              />
+            <br />
+          </Box>
+          <Box mb={4}>
+            <span className="subheading">Select Date</span>
+            <CalendarComponent onDateChange={handleDateChange} />
+            <br />
+          </Box>
+          {selectedDate &&
+            <Box mb={4}>
+              <span className="subheading">Choose Category</span>
+              <Dropdown options={HumorCategoryList} onCategoryChange={handleCategoryChange} selectedDropdownValue={selectedCategory} />
+              <br />
+            </Box>}
+          {selectedDate && selectedCategory &&
+            <Box mb={4}>
+              <span className="subheading">Select Humors</span><button id='refresh' onClick={() => fetchUuids(selectedCategory || '')}>&#x1F503;</button>
+              <div>
+                <button className="add-humor" onClick={createNewHumor}>Add Humor</button>
+                {!humorList && "Loading Humor List..."}
+                {humorList && <UUIDList humorList={humorList} setFromExistingHumor={setFromExistingHumor} />}
+              </div>
+              <br />
+            </Box>}
+          {submitType &&
+            <Box mb={4}>
+              <span className="subheading">Update/Add Humor Details</span>
+              {humorFormData != null && <SimpleForm actionName={submitType ?? 'create'} humorFormData={humorFormData} updateHumorFormData={updateHumorFormData} handleSubmit={handleSubmit} isHttpRunning={isHttpRunning} />}
+            </Box>}
           <div>
-            <button className="add-humor" onClick={createNewHumor}>Add Humor</button>
-            {!humorList && "Loading Humor List..."}
-            {humorList && <UUIDList humorList={humorList} setFromExistingHumor={setFromExistingHumor} />}
+            {httpMessage}
           </div>
-          <br />
-        </Box>}
-      {submitType && 
-        <Box mb={4}>
-          <span className="subheading">Update/Add Humor Details</span>
-          {humorFormData != null && <SimpleForm actionName={submitType ?? 'create'} humorFormData={humorFormData} updateHumorFormData={updateHumorFormData} handleSubmit={handleSubmit} isHttpRunning={isHttpRunning}/>}
-        </Box>}
-      <div>
-        {httpMessage}
-      </div>
     </Container>
   );
 };
