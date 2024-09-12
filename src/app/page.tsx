@@ -9,12 +9,12 @@ import CalendarComponent from "./components/Calendar"; // Correct relative path
 import Dropdown from "./components/Dropdown";
 import UUIDList from "./components/UUIDList";
 import SimpleForm from "./components/Form";
-import { HumorCategoryList, firebaseFunctionUrl, HumorDataKey, defaultHumor, Humor, formatDateToYYYYMMDD } from './util';
+import { HumorCategoryList, HumorCategory, firebaseFunctionUrl, HumorDataKey, defaultHumor, Humor, formatDateToYYYYMMDD } from './util';
 
 const HomePage: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<HumorCategory | null>(null);
   const [humorList, setHumorList] = useState<Humor[] | null>(null)
   const [humorFormData, setHumorFormData] = useState<Humor | null>(null);
   const [submitType, setSubmitType] = useState<'update' | 'create' | null>(null);
@@ -30,7 +30,7 @@ const HomePage: React.FC = () => {
   };
 
   const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category); // this is set
+    setSelectedCategory(category as HumorCategory); // this is set
     setHumorList(null); // this is set (later)
     setHumorFormData(null);
     setSubmitType(null);
@@ -43,7 +43,7 @@ const HomePage: React.FC = () => {
   }
 
   const createNewHumor = () => {
-    setHumorFormData({ ...defaultHumor, uuid: uuidv4(), index: humorList?.length || 0, created_date: formatDateToYYYYMMDD(new Date()), }); // this is set
+    setHumorFormData({ ...defaultHumor, uuid: uuidv4(), index: humorList?.length || 0, created_date: formatDateToYYYYMMDD(new Date()), category: selectedCategory! }); // this is set
     setSubmitType('create'); // this is set
   }
 
@@ -98,6 +98,7 @@ const HomePage: React.FC = () => {
         setSubmitType('update');
       } else {
         console.error(`${submitType} operation Failed`);
+        console.log('response is: ', response); // need to figure out some useful message from this response object. later show it instead of response.statusText because it is shown as empty from the production app.
         setHttpMessage(response.statusText);
       }
     } catch (error) {

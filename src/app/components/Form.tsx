@@ -55,7 +55,7 @@ const SimpleForm: React.FC<SimpleFormProps> = ({ actionName, humorFormData, upda
                     Category
                 </label>
                 <div className="flex-1">
-                    <Dropdown options={HumorCategoryList} onCategoryChange={() => { }} selectedDropdownValue={humorFormData.category} />
+                    <Dropdown options={HumorCategoryList} onCategoryChange={(category) => updateHumorFormData('category', category)} selectedDropdownValue={humorFormData.category} />
                 </div>
             </div>
             <div className="divider"></div>
