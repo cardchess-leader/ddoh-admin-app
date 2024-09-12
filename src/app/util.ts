@@ -51,19 +51,19 @@ const defaultHumor: Humor = {
   created_date: '2024-01-01', // should be in format of yyyy-mm-dd
   index: 0,
   punchline: '', // empty string will be treated as null, vise versa
-  sender: '',
-  source: '',
+  sender: 'Board Collie',
+  source: 'Daily Dose of Humors',
   uuid: '',
 };
 
 const firebaseFunctionUrl = isProduction ? 'https://us-central1-daily-dose-of-humors.cloudfunctions.net' : 'http://127.0.0.1:5001/daily-dose-of-humors/us-central1';
 
-function formatDateToYYYYMMDD(date: Date): string {
+function formatDateToYYYYMMDD(date: Date): DateString {
   const year = date.getFullYear(); // Get the full year (e.g., 2024)
   const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed, pad with leading zero if needed
   const day = String(date.getDate()).padStart(2, '0'); // Pad day with leading zero if needed
 
-  return `${year}-${month}-${day}`; // Format as 'yyyy-mm-dd'
+  return `${year}-${month}-${day}` as DateString; // Format as 'yyyy-mm-dd'
 }
 
 function validateHumor(humor: Humor): string[] {
