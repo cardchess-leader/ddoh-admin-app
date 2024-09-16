@@ -1,4 +1,4 @@
-const isProduction = true; // Set this to false for debugging
+const IS_PRODUCTION = true; // Set this to false for debugging
 
 const HumorCategoryList = [
     "DAD_JOKES",
@@ -56,7 +56,7 @@ const defaultHumor: Humor = {
   uuid: '',
 };
 
-const firebaseFunctionUrl = isProduction ? 'https://us-central1-daily-dose-of-humors.cloudfunctions.net' : 'http://127.0.0.1:5001/daily-dose-of-humors/us-central1';
+const firebaseFunctionUrl = IS_PRODUCTION ? 'https://us-central1-daily-dose-of-humors.cloudfunctions.net' : 'http://127.0.0.1:5001/daily-dose-of-humors/us-central1';
 
 function formatDateToYYYYMMDD(date: Date): DateString {
   const year = date.getFullYear(); // Get the full year (e.g., 2024)

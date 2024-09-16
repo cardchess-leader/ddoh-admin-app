@@ -1,4 +1,3 @@
-// src/app/page.tsx
 "use client";
 
 import React, { useState } from "react";
@@ -22,7 +21,7 @@ const HomePage: React.FC = () => {
   const [httpMessage, setHttpMessage] = useState<string>('');
 
   const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date); // this is set
+    setSelectedDate(date);
     setSelectedCategory(null);
     setHumorList(null);
     setHumorFormData(null);
@@ -30,21 +29,21 @@ const HomePage: React.FC = () => {
   };
 
   const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category as HumorCategory); // this is set
-    setHumorList(null); // this is set (later)
+    setSelectedCategory(category as HumorCategory);
+    setHumorList(null);
     setHumorFormData(null);
     setSubmitType(null);
-    fetchUuids(category); // side effect
+    fetchUuids(category);
   };
 
   const setFromExistingHumor = (humor: Humor) => {
-    setHumorFormData(humor); // this is set
-    setSubmitType('update'); // this is set
+    setHumorFormData(humor);
+    setSubmitType('update');
   }
 
   const createNewHumor = () => {
-    setHumorFormData({ ...defaultHumor, uuid: uuidv4(), index: humorList?.length || 0, created_date: formatDateToYYYYMMDD(new Date()), category: selectedCategory! }); // this is set
-    setSubmitType('create'); // this is set
+    setHumorFormData({ ...defaultHumor, uuid: uuidv4(), index: humorList?.length || 0, created_date: formatDateToYYYYMMDD(selectedDate || new Date()), category: selectedCategory! });
+    setSubmitType('create');
   }
 
   const updateHumorFormData = (key: HumorDataKey, value: string | number, arg?: string | number) => {
@@ -98,8 +97,7 @@ const HomePage: React.FC = () => {
         setSubmitType('update');
       } else {
         console.error(`${submitType} operation Failed`);
-        console.log('response is: ', response); // need to figure out some useful message from this response object. later show it instead of response.statusText because it is shown as empty from the production app.
-        setHttpMessage(response.statusText);
+        setHttpMessage(`${submitType} operation Failed`);
       }
     } catch (error) {
       console.error(`${submitType} operation Failed`, error);
@@ -139,45 +137,45 @@ const HomePage: React.FC = () => {
         <span className="heading">Daily Dose of Humors Admin App</span>
       </Typography>
       <br />
-          <Box mb={4}>
-            <span className="subheading">Enter Password</span>
-              <input
-                type="password"
-                className="form-control flex-1"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-              />
-            <br />
-          </Box>
-          <Box mb={4}>
-            <span className="subheading">Select Date</span>
-            <CalendarComponent onDateChange={handleDateChange} />
-            <br />
-          </Box>
-          {selectedDate &&
-            <Box mb={4}>
-              <span className="subheading">Choose Category</span>
-              <Dropdown options={HumorCategoryList} onCategoryChange={handleCategoryChange} selectedDropdownValue={selectedCategory} />
-              <br />
-            </Box>}
-          {selectedDate && selectedCategory &&
-            <Box mb={4}>
-              <span className="subheading">Select Humors</span><button id='refresh' onClick={() => fetchUuids(selectedCategory || '')}>&#x1F503;</button>
-              <div>
-                <button className="add-humor" onClick={createNewHumor}>Add Humor</button>
-                {!humorList && "Loading Humor List..."}
-                {humorList && <UUIDList humorList={humorList} setFromExistingHumor={setFromExistingHumor} />}
-              </div>
-              <br />
-            </Box>}
-          {submitType &&
-            <Box mb={4}>
-              <span className="subheading">Update/Add Humor Details</span>
-              {humorFormData != null && <SimpleForm actionName={submitType ?? 'create'} humorFormData={humorFormData} updateHumorFormData={updateHumorFormData} handleSubmit={handleSubmit} isHttpRunning={isHttpRunning} />}
-            </Box>}
+      <Box mb={4}>
+        <span className="subheading">Enter Password</span>
+        <input
+          type="password"
+          className="form-control flex-1"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+        />
+        <br />
+      </Box>
+      <Box mb={4}>
+        <span className="subheading">Select Date</span>
+        <CalendarComponent onDateChange={handleDateChange} />
+        <br />
+      </Box>
+      {selectedDate &&
+        <Box mb={4}>
+          <span className="subheading">Choose Category</span>
+          <Dropdown options={HumorCategoryList} onCategoryChange={handleCategoryChange} selectedDropdownValue={selectedCategory} />
+          <br />
+        </Box>}
+      {selectedDate && selectedCategory &&
+        <Box mb={4}>
+          <span className="subheading">Select Humors</span><button id='refresh' onClick={() => fetchUuids(selectedCategory || '')}>&#x1F503;</button>
           <div>
-            {httpMessage}
+            <button className="add-humor" onClick={createNewHumor}>Add Humor</button>
+            {!humorList && "Loading Humor List..."}
+            {humorList && <UUIDList humorList={humorList} setFromExistingHumor={setFromExistingHumor} />}
           </div>
+          <br />
+        </Box>}
+      {submitType &&
+        <Box mb={4}>
+          <span className="subheading">Update/Add Humor Details</span>
+          {humorFormData != null && <SimpleForm actionName={submitType ?? 'create'} humorFormData={humorFormData} updateHumorFormData={updateHumorFormData} handleSubmit={handleSubmit} isHttpRunning={isHttpRunning} />}
+        </Box>}
+      <div>
+        {httpMessage}
+      </div>
     </Container>
   );
 };
