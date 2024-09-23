@@ -83,5 +83,18 @@ function validateHumor(humor: Humor): string[] {
   return invalid_fields;
 }
 
+interface Bundle {
+  active: boolean,
+  bundle_name: string,
+  category: HumorCategory,
+  cover_img_list: string[],
+  created_date: DateString,
+  humor_count: number,
+  language_code: string,
+  set_list: string[],
+  thumbnail_path: string,
+  uuid: string,
+}
+
 export { HumorCategoryList, firebaseFunctionUrl, defaultHumor, formatDateToYYYYMMDD, validateHumor };
-export type { Humor, HumorDataKey, HumorCategory };
+export type { Humor, HumorDataKey, HumorCategory, Bundle };

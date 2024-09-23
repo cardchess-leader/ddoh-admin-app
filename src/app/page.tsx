@@ -1,183 +1,27 @@
 "use client";
 
 import React, { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import bcrypt from "bcryptjs";
-import { Container, Typography, Box } from "@mui/material";
-import CalendarComponent from "./components/Calendar"; // Correct relative path
-import Dropdown from "./components/Dropdown";
-import UUIDList from "./components/UUIDList";
-import SimpleForm from "./components/Form";
-import { HumorCategoryList, HumorCategory, firebaseFunctionUrl, HumorDataKey, defaultHumor, Humor, formatDateToYYYYMMDD } from './util';
+import DailyPage from "./pages/DailyPage";
+import BundlePage from "./pages/BundlePage";
 
 const HomePage: React.FC = () => {
-  const [password, setPassword] = useState<string>('');
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<HumorCategory | null>(null);
-  const [humorList, setHumorList] = useState<Humor[] | null>(null)
-  const [humorFormData, setHumorFormData] = useState<Humor | null>(null);
-  const [submitType, setSubmitType] = useState<'update' | 'create' | null>(null);
-  const [isHttpRunning, setIsHttpRunning] = useState<boolean>(false);
-  const [httpMessage, setHttpMessage] = useState<string>('');
+  const [isToggled, setIsToggled] = useState(false);
 
-  const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
-    setSelectedCategory(null);
-    setHumorList(null);
-    setHumorFormData(null);
-    setSubmitType(null);
-  };
-
-  const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category as HumorCategory);
-    setHumorList(null);
-    setHumorFormData(null);
-    setSubmitType(null);
-    fetchUuids(category);
-  };
-
-  const setFromExistingHumor = (humor: Humor) => {
-    setHumorFormData(humor);
-    setSubmitType('update');
-  }
-
-  const createNewHumor = () => {
-    setHumorFormData({ ...defaultHumor, uuid: uuidv4(), index: humorList?.length || 0, created_date: formatDateToYYYYMMDD(selectedDate || new Date()), category: selectedCategory! });
-    setSubmitType('create');
-  }
-
-  const updateHumorFormData = (key: HumorDataKey, value: string | number, arg?: string | number) => {
-    console.log(arg);
-    switch (key) {
-      case 'author': case 'category': case 'context': case 'created_date': case 'punchline': case 'sender': case 'source': case 'uuid':
-        setHumorFormData({ ...defaultHumor, ...humorFormData, [key]: value });
-        return;
-      case 'index':
-        setHumorFormData({ ...defaultHumor, ...humorFormData, [key]: Number(value) });
-        return;
-      case 'context_list':
-        const newHumor = { ...defaultHumor, ...humorFormData };
-        if (arg === 'add') {
-          newHumor[key].push('');
-        } else if (arg === 'remove') {
-          const index = +value;
-          newHumor[key].splice(index, 1);
-        } else {
-          const index = +(arg ?? 0);
-          newHumor[key][index] = String(value);
-        }
-        setHumorFormData(newHumor);
-        return;
-    }
-  }
-
-  const handleSubmit = async () => {
-    try {
-      setIsHttpRunning(true);
-      let requestUrl = '';
-      if (submitType === 'update') {
-        requestUrl = `${firebaseFunctionUrl}/updateDailyHumors`;
-      } else {
-        requestUrl = `${firebaseFunctionUrl}/addDailyHumors`;
-      }
-      const passwordHash = await bcrypt.hash(password, 10);
-      const response = await fetch(
-        requestUrl,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ ...humorFormData!, date: formatDateToYYYYMMDD(selectedDate || new Date()), passwordHash }),
-        }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setHttpMessage(data.message);
-        setSubmitType('update');
-      } else {
-        console.error(`${submitType} operation Failed`);
-        setHttpMessage(`${submitType} operation Failed`);
-      }
-    } catch (error) {
-      console.error(`${submitType} operation Failed`, error);
-      setHttpMessage(`${submitType} operation Failed, ${error}`);
-    } finally {
-      setIsHttpRunning(false);
-    }
-  }
-
-  const fetchUuids = async (category: string) => {
-    console.log('fetchUuid');
-    if (category && selectedDate) {
-      try {
-        setHumorList(null);
-        setIsHttpRunning(true);
-        const response = await fetch(
-          `${firebaseFunctionUrl}/getDailyHumors?category=${category}&date=${formatDateToYYYYMMDD(selectedDate)}`
-        );
-        if (response.ok) {
-          const data = await response.json();
-          console.log('data is: ', data);
-          setHumorList(data.humorList.map((humor: Humor) => humor));
-        } else {
-          console.error("Failed to fetch UUIDs");
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setIsHttpRunning(false);
-      }
-    }
+  const handleToggle = () => {
+    setIsToggled(!isToggled); // Toggle the state
   };
 
   return (
-    <Container maxWidth="md">
-      <Typography variant="h4" gutterBottom>
-        <span className="heading">Daily Dose of Humors Admin App</span>
-      </Typography>
-      <br />
-      <Box mb={4}>
-        <span className="subheading">Enter Password</span>
-        <input
-          type="password"
-          className="form-control flex-1"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-        />
-        <br />
-      </Box>
-      <Box mb={4}>
-        <span className="subheading">Select Date</span>
-        <CalendarComponent onDateChange={handleDateChange} />
-        <br />
-      </Box>
-      {selectedDate &&
-        <Box mb={4}>
-          <span className="subheading">Choose Category</span>
-          <Dropdown options={HumorCategoryList} onCategoryChange={handleCategoryChange} selectedDropdownValue={selectedCategory} />
-          <br />
-        </Box>}
-      {selectedDate && selectedCategory &&
-        <Box mb={4}>
-          <span className="subheading">Select Humors</span><button id='refresh' onClick={() => fetchUuids(selectedCategory || '')}>&#x1F503;</button>
-          <div>
-            <button className="add-humor" onClick={createNewHumor}>Add Humor</button>
-            {!humorList && "Loading Humor List..."}
-            {humorList && <UUIDList humorList={humorList} setFromExistingHumor={setFromExistingHumor} />}
-          </div>
-          <br />
-        </Box>}
-      {submitType &&
-        <Box mb={4}>
-          <span className="subheading">Update/Add Humor Details</span>
-          {humorFormData != null && <SimpleForm actionName={submitType ?? 'create'} humorFormData={humorFormData} updateHumorFormData={updateHumorFormData} handleSubmit={handleSubmit} isHttpRunning={isHttpRunning} />}
-        </Box>}
-      <div>
-        {httpMessage}
+    <div>
+      <div className="toggle-row">
+        <div className="text">Editor Mode: <span style={{color: isToggled ? "#2196f3" : "#ff6666"}}>{isToggled ? "Humor Bundles" : "Daily Humors"}</span></div>
+        <label className="toggle-switch">
+          <input type="checkbox" checked={isToggled} onChange={handleToggle} />
+          <span className="slider" />
+        </label>
       </div>
-    </Container>
-  );
+      {isToggled ? <BundlePage /> : <DailyPage />}
+    </div>);
 };
 
 export default HomePage;
