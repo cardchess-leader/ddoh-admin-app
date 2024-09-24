@@ -1,4 +1,4 @@
-const IS_PRODUCTION = true; // Set this to false for debugging
+const IS_PRODUCTION = false; // Set this to false for debugging
 
 const HumorCategoryList = [
     "DAD_JOKES",
@@ -96,5 +96,18 @@ interface Bundle {
   uuid: string,
 }
 
-export { HumorCategoryList, firebaseFunctionUrl, defaultHumor, formatDateToYYYYMMDD, validateHumor };
+const defaultBundle: Bundle = {
+  active: true,
+  bundle_name: '',
+  category: 'DAD_JOKES',
+  cover_img_list: [],
+  created_date: '2024-01-01',
+  humor_count: 100,
+  language_code: 'EN',
+  set_list: [],
+  thumbnail_path: '',
+  uuid: '',
+};
+
+export { HumorCategoryList, firebaseFunctionUrl, defaultHumor, formatDateToYYYYMMDD, validateHumor, defaultBundle };
 export type { Humor, HumorDataKey, HumorCategory, Bundle };

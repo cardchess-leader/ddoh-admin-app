@@ -7,7 +7,7 @@ import { HumorCategoryList, Humor, HumorDataKey, validateHumor } from '../util';
 import Dropdown from "./Dropdown";
 
 interface SimpleFormProps {
-    actionName: string;
+    submitType: 'create' | 'update';
     humorFormData: Humor;
     updateHumorFormData: (key: HumorDataKey, value: string | number, arg?: string | number) => void
     handleSubmit: () => void;
@@ -15,7 +15,7 @@ interface SimpleFormProps {
 }
 
 
-const SimpleForm: React.FC<SimpleFormProps> = ({ actionName, humorFormData, updateHumorFormData, handleSubmit, isHttpRunning }) => {
+const SimpleForm: React.FC<SimpleFormProps> = ({ submitType, humorFormData, updateHumorFormData, handleSubmit, isHttpRunning }) => {
     console.log('humorFormData is: ', humorFormData);
     const invalid_field_list = validateHumor(humorFormData);
     return (
@@ -174,8 +174,8 @@ const SimpleForm: React.FC<SimpleFormProps> = ({ actionName, humorFormData, upda
             </div>
             <div className="divider"></div>
             <div className="p-4">
-                <button className={`btn btn-primary save ${actionName}`} onClick={handleSubmit} disabled={isHttpRunning || invalid_field_list.length > 0}>
-                    {isHttpRunning ? 'Please Wait...' : actionName.toUpperCase()}
+                <button className={`btn btn-primary save ${submitType}`} onClick={handleSubmit} disabled={isHttpRunning || invalid_field_list.length > 0}>
+                    {isHttpRunning ? 'Please Wait...' : submitType.toUpperCase()}
                 </button>
             </div>
         </div>

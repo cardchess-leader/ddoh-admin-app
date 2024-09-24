@@ -13,7 +13,7 @@ const HomePage: React.FC = () => {
 
   return (
     <div>
-      <div className="toggle-row">
+      <div className="toggle-row" style={{ margin: "10px 10px 20px 10px" }}>
         <div className="text">Editor Mode: <span style={{color: isToggled ? "#2196f3" : "#ff6666"}}>{isToggled ? "Humor Bundles" : "Daily Humors"}</span></div>
         <label className="toggle-switch">
           <input type="checkbox" checked={isToggled} onChange={handleToggle} />

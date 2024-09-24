@@ -171,7 +171,7 @@ const DailyPage: React.FC = () => {
       {submitType &&
         <Box mb={4}>
           <span className="subheading">Update/Add Humor Details</span>
-          {humorFormData != null && <SimpleForm actionName={submitType ?? 'create'} humorFormData={humorFormData} updateHumorFormData={updateHumorFormData} handleSubmit={handleSubmit} isHttpRunning={isHttpRunning} />}
+          {humorFormData != null && <SimpleForm submitType={submitType} humorFormData={humorFormData} updateHumorFormData={updateHumorFormData} handleSubmit={handleSubmit} isHttpRunning={isHttpRunning} />}
         </Box>}
       <div>
         {httpMessage}

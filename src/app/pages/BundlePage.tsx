@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import { Container, Typography, Box } from "@mui/material";
+import { v4 as uuidv4 } from "uuid";
 import BundleList from "../components/BundleList";
-import { firebaseFunctionUrl, Bundle } from '../util';
+import { firebaseFunctionUrl, Bundle, defaultBundle, formatDateToYYYYMMDD } from '../util';
 import BundleDetail from "../components/BundleDetail";
 import bcrypt from "bcryptjs";
 
@@ -11,10 +12,14 @@ const BundlePage: React.FC = () => {
     const [password, setPassword] = useState<string>('');
     const [bundleList, setBundleList] = useState<string[] | null>(null);
     const [bundleDetail, setBundleDetail] = useState<Bundle | null>(null);
+    const [submitType, setSubmitType] = useState<'update' | 'create' | null>(null);
     const [isHttpRunning, setIsHttpRunning] = useState<boolean>(false);
+    const [httpMessage, setHttpMessage] = useState<string>('');
+
     useEffect(() => {
         fetchBundles();
     }, []);
+
     const fetchBundles = async () => {
         try {
             setBundleList(null);
@@ -38,27 +43,46 @@ const BundlePage: React.FC = () => {
     }
 
     const createNewBundle = async () => {
+        setBundleDetail({ ...defaultBundle, uuid: uuidv4(), created_date: formatDateToYYYYMMDD(new Date()) });
+        setSubmitType('create');
     }
 
-    const updateBundleDetail = async (key: string, value: string | number, arg?: string | number) => {
+    const updateBundleDetail = async (key: string, value: string | number | boolean, arg?: string | number) => {
+        console.log('key is: ', key, 'value is: ', value);
         switch (key) {
-            case 'bundle_name': case 'category': case 'created_date': case 'humor_count': case 'language_code': case 'thumbnail_path':
-              setBundleDetail({ ...bundleDetail!, [key]: value });
-              return;
+            case 'bundle_name': case 'category': case 'created_date':
+                setBundleDetail({ ...bundleDetail!, [key]: value });
+                return;
+            case 'humor_count':
+                if (isNaN(+value) || value === '') {
+                    console.log("humor count value is: ", value);
+                    return;
+                }
+                setBundleDetail({ ...bundleDetail!, [key]: value as number });
+                return;
+            case 'language_code':
+                if (typeof value !== 'string' || value.length > 2) {
+                    return;
+                }
+                setBundleDetail({ ...bundleDetail!, [key]: value });
+                return;
             case 'set_list':
-              const newBundleDetail = { ...bundleDetail! };
-              if (arg === 'add') {
-                newBundleDetail[key].push('');
-              } else if (arg === 'remove') {
-                const index = +value;
-                newBundleDetail[key].splice(index, 1);
-              } else {
-                const index = +(arg ?? 0);
-                newBundleDetail[key][index] = String(value);
-              }
-              setBundleDetail(newBundleDetail);
-              return;
-          }
+                const newBundleDetail = { ...bundleDetail! };
+                if (arg === 'add') {
+                    newBundleDetail[key].push('');
+                } else if (arg === 'remove') {
+                    const index = +value;
+                    newBundleDetail[key].splice(index, 1);
+                } else {
+                    const index = +(arg ?? 0);
+                    newBundleDetail[key][index] = String(value);
+                }
+                setBundleDetail(newBundleDetail);
+                return;
+            case 'active':
+                setBundleDetail({ ...bundleDetail!, [key]: value as boolean });
+                return;
+        }
     }
 
     const setFromExistingBundle = async (uuid: string) => {
@@ -70,6 +94,7 @@ const BundlePage: React.FC = () => {
             if (response.ok) {
                 const data = await response.json();
                 setBundleDetail(data.bundleDetail);
+                setSubmitType('update');
             } else {
                 console.error("Failed to fetch UUIDs");
             }
@@ -87,24 +112,24 @@ const BundlePage: React.FC = () => {
         try {
             setIsHttpRunning(true);
             const requestUrl = `${firebaseFunctionUrl}/updateBundleCoverImages`;
-    
+
             // Create FormData object to hold both the file and other fields
             const formData = new FormData();
             const passwordHash = await bcrypt.hash(password, 10);
-    
+
             // Append file to the FormData object
             formData.append("file", file); // 'file' is the key that will be used to access the file on the backend
             formData.append("bundle_uuid", bundleDetail.uuid);
             formData.append("method", method);
             formData.append("index", index.toString());
             formData.append("passwordHash", passwordHash);
-    
+
             // Send the FormData object via a POST request
             const response = await fetch(requestUrl, {
                 method: "POST",
                 body: formData, // No need for headers when using FormData, fetch sets them automatically
             });
-    
+
             if (response.ok) {
                 setFromExistingBundle(bundleDetail.uuid);
             } else {
@@ -124,21 +149,21 @@ const BundlePage: React.FC = () => {
             }
             setIsHttpRunning(true);
             const requestUrl = `${firebaseFunctionUrl}/removeBundleCoverImages`;
-    
+
             // Create FormData object to hold both the file and other fields
             const passwordHash = await bcrypt.hash(password, 10);
 
             const response = await fetch(
                 requestUrl,
                 {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({ bundle_uuid: bundleDetail.uuid, index, passwordHash }),
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ bundle_uuid: bundleDetail.uuid, index, passwordHash }),
                 }
-              );
-    
+            );
+
             if (response.ok) {
                 setFromExistingBundle(bundleDetail.uuid);
             } else {
@@ -150,6 +175,77 @@ const BundlePage: React.FC = () => {
             setIsHttpRunning(false);
         }
     };
+
+    const updateThumbnailImage = async (file: File | null) => {
+        if (!bundleDetail || !file) {
+            return;
+        }
+        try {
+            setIsHttpRunning(true);
+            const requestUrl = `${firebaseFunctionUrl}/updateThumbnailImage`;
+
+            // Create FormData object to hold both the file and other fields
+            const formData = new FormData();
+            const passwordHash = await bcrypt.hash(password, 10);
+
+            // Append file to the FormData object
+            formData.append("file", file); // 'file' is the key that will be used to access the file on the backend
+            formData.append("bundle_uuid", bundleDetail.uuid);
+            formData.append("passwordHash", passwordHash);
+
+            // Send the FormData object via a POST request
+            const response = await fetch(requestUrl, {
+                method: "POST",
+                body: formData, // No need for headers when using FormData, fetch sets them automatically
+            });
+
+            if (response.ok) {
+                setFromExistingBundle(bundleDetail.uuid);
+            } else {
+                console.error("Operation Failed");
+                throw Error();
+            }
+        } catch (error) {
+            console.error("Operation Failed", error);
+            setIsHttpRunning(false);
+        }
+    }
+
+    const handleSubmit = async () => {
+        try {
+            setIsHttpRunning(true);
+            let requestUrl = '';
+            if (submitType === 'create') {
+                requestUrl = `${firebaseFunctionUrl}/addHumorBundle`;
+            } else if (submitType === 'update') {
+                requestUrl = `${firebaseFunctionUrl}/updateHumorBundle`;
+            }
+            const passwordHash = await bcrypt.hash(password, 10);
+            const response = await fetch(
+                requestUrl,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ ...bundleDetail, passwordHash }),
+                }
+            );
+            if (response.ok) {
+                const data = await response.json();
+                setHttpMessage(data.message);
+                setSubmitType('update');
+            } else {
+                console.error(`${submitType} operation Failed`);
+                setHttpMessage(`${submitType} operation Failed`);
+            }
+        } catch (error) {
+            console.error(`${submitType} operation Failed`, error);
+            setHttpMessage(`${submitType} operation Failed, ${error}`);
+        } finally {
+            setIsHttpRunning(false);
+        }
+    }
 
     return (
         <Container maxWidth="md">
@@ -177,9 +273,11 @@ const BundlePage: React.FC = () => {
                 <br />
             </Box>
             {
-                bundleDetail && <BundleDetail bundleDetail={bundleDetail} updateBundleDetail={updateBundleDetail} updateCoverImage={updateCoverImage} removeCoverImage={removeCoverImage} />
+                (submitType && bundleDetail) && <BundleDetail bundleDetail={bundleDetail} updateBundleDetail={updateBundleDetail} updateCoverImage={updateCoverImage} removeCoverImage={removeCoverImage} submitType={submitType} updateThumbnailImage={updateThumbnailImage} isHttpRunning={isHttpRunning} handleSubmit={handleSubmit} />
             }
-            {isHttpRunning}
+            <div>
+                {httpMessage}
+            </div>
         </Container>
     );
 };
