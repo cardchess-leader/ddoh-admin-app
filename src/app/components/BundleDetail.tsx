@@ -93,7 +93,7 @@ const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleD
                                 <input id={`file-input_${index}`} type="file" style={{ display: "none" }} onChange={e => updateCoverImage(e.target.files ? e.target.files[0] : null, index, "replace")} accept="image/*" />
                                 <label htmlFor={`file-input_${index}`} style={{ position: "absolute", width: "100%", height: "100%", left: 0, top: 0 }}></label>
                             </div>
-                            <button style={{ height: "25px", width: "25px", backgroundColor: "red", borderRadius: 10, marginLeft: "25px", display: "flex", justifyContent: "center", alignItems: "center", color: "white", fontSize: "30px" }} onClick={e => removeCoverImage(index)}>&times;</button>
+                            <button style={{ height: "25px", width: "25px", backgroundColor: "red", borderRadius: 10, marginLeft: "25px", display: "flex", justifyContent: "center", alignItems: "center", color: "white", fontSize: "30px" }} onClick={() => removeCoverImage(index)}>&times;</button>
                         </div>
                     ))}
                     <div style={{ width: "100%", height: "30px", position: "relative" }}>
