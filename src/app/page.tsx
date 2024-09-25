@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import DailyPage from "./pages/DailyPage";
+import HumorPage from "./pages/HumorPage";
 import BundlePage from "./pages/BundlePage";
 
 const HomePage: React.FC = () => {
@@ -20,7 +20,7 @@ const HomePage: React.FC = () => {
           <span className="slider" />
         </label>
       </div>
-      {isToggled ? <BundlePage /> : <DailyPage />}
+      {isToggled ? <BundlePage /> : <HumorPage />}
     </div>);
 };
 

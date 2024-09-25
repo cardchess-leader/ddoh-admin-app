@@ -1,4 +1,3 @@
-// components/SimpleForm.tsx
 'use client';
 
 // import React, { useState } from 'react';
@@ -64,7 +63,7 @@ const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleD
                     Category
                 </label>
                 <div className="flex-1">
-                    <Dropdown options={HumorCategoryList} onCategoryChange={(category) => updateBundleDetail('category', category)} selectedDropdownValue={bundleDetail.category} />
+                    <Dropdown options={HumorCategoryList.map(category => ({label: category, value: category}))} onChange={(category) => updateBundleDetail('category', category)} selectedDropdownValue={bundleDetail.category} />
                 </div>
             </div>
             <div className="divider"></div>
@@ -97,14 +96,14 @@ const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleD
                 </div>
             </div>
             <div className="mb-3 p-4 flex">
-                <label htmlFor="created_date" className="form-label">
+                <label htmlFor="release_date" className="form-label">
                     Created Date
                 </label>
                 <input
                     type="text"
                     className="form-control flex-1"
-                    value={bundleDetail.created_date}
-                    onChange={e => updateBundleDetail('created_date', e.target.value)}
+                    value={bundleDetail.release_date}
+                    onChange={e => updateBundleDetail('release_date', e.target.value)}
                     required
                 />
             </div>

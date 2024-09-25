@@ -3,19 +3,20 @@
 
 import React from "react";
 import { List, ListItem, ListItemText } from "@mui/material";
+import { Bundle } from '../util';
 
 
 interface BundleListProps {
-    bundleList: string[];
-  setFromExistingBundle: (uuid: string) => void
+    bundleList: Bundle[];
+  setFromExistingBundle: (bundle: Bundle) => void
 }
 
 const BundleList: React.FC<BundleListProps> = ({ bundleList, setFromExistingBundle }) => {
   return (
     <List>
-      {bundleList.map((uuid) => (
-        <ListItem className='uuid-item' key={uuid} component="button" onClick={() => setFromExistingBundle(uuid)}>
-          <ListItemText primary={uuid} />
+      {bundleList.map((bundle) => (
+        <ListItem className='uuid-item' key={bundle.uuid} component="button" onClick={() => setFromExistingBundle(bundle)}>
+          <ListItemText primary={bundle.uuid} />
         </ListItem>
       ))}
     </List>

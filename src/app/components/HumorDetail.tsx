@@ -1,22 +1,20 @@
-// components/SimpleForm.tsx
 'use client';
 
-// import React, { useState } from 'react';
 import React from 'react';
-import { HumorCategoryList, Humor, HumorDataKey, validateHumor } from '../util';
+import { HumorCategoryList, Humor, HumorDataKey, validateHumor, Bundle } from '../util';
 import Dropdown from "./Dropdown";
 
-interface SimpleFormProps {
+interface HumorDetailProps {
     submitType: 'create' | 'update';
     humorFormData: Humor;
-    updateHumorFormData: (key: HumorDataKey, value: string | number, arg?: string | number) => void
+    updateHumorFormData: (key: HumorDataKey, value: string | number | boolean, arg?: string | number) => void
     handleSubmit: () => void;
     isHttpRunning: boolean;
+    humorBundleList: Bundle[];
 }
 
 
-const SimpleForm: React.FC<SimpleFormProps> = ({ submitType, humorFormData, updateHumorFormData, handleSubmit, isHttpRunning }) => {
-    console.log('humorFormData is: ', humorFormData);
+const HumorDetail: React.FC<HumorDetailProps> = ({ submitType, humorFormData, updateHumorFormData, handleSubmit, isHttpRunning, humorBundleList }) => {
     const invalid_field_list = validateHumor(humorFormData);
     return (
         <div className="form border rounded shadow-sm">
@@ -32,6 +30,19 @@ const SimpleForm: React.FC<SimpleFormProps> = ({ submitType, humorFormData, upda
                     value={humorFormData.uuid}
                     readOnly
                     required
+                />
+            </div>
+            <div className="divider"></div>
+            <div className="mb-3 p-4 flex">
+                <label htmlFor="uuid" className="form-label">
+                    Active
+                </label>
+                <input
+                    type="checkbox"
+                    className="form-control"
+                    checked={humorFormData.active}
+                    onChange={e => updateHumorFormData('active', e.target.checked)}
+                    style={{ width: "30px", height: "30px" }}
                 />
             </div>
             <div className="divider"></div>
@@ -55,7 +66,7 @@ const SimpleForm: React.FC<SimpleFormProps> = ({ submitType, humorFormData, upda
                     Category
                 </label>
                 <div className="flex-1">
-                    <Dropdown options={HumorCategoryList} onCategoryChange={(category) => updateHumorFormData('category', category)} selectedDropdownValue={humorFormData.category} />
+                    <Dropdown options={HumorCategoryList.map(category => ({label: category, value: category}))} onChange={(category) => updateHumorFormData('category', category)} selectedDropdownValue={humorFormData.category} />
                 </div>
             </div>
             <div className="divider"></div>
@@ -114,16 +125,16 @@ const SimpleForm: React.FC<SimpleFormProps> = ({ submitType, humorFormData, upda
                 />
             </div>
             <div className="mb-3 p-4 flex">
-                <label htmlFor="created_date" className="form-label">
-                    Created Date {invalid_field_list.includes('created_date') && <span style={{color: 'red'}}>*</span>}
+                <label htmlFor="release_date" className="form-label">
+                    Created Date {invalid_field_list.includes('release_date') && <span style={{color: 'red'}}>*</span>}
                 </label>
                 <input
                     type="text"
                     className="form-control flex-1"
-                    id="created_date"
-                    name="created_date"
-                    value={humorFormData.created_date}
-                    onChange={e => updateHumorFormData('created_date', e.target.value)}
+                    id="release_date"
+                    name="release_date"
+                    value={humorFormData.release_date}
+                    onChange={e => updateHumorFormData('release_date', e.target.value)}
                     required
                 />
             </div>
@@ -160,17 +171,9 @@ const SimpleForm: React.FC<SimpleFormProps> = ({ submitType, humorFormData, upda
             <div className="divider"></div>
             <div className="mb-3 p-4 flex">
                 <label htmlFor="source" className="form-label">
-                    Source {invalid_field_list.includes('source') && <span style={{color: 'red'}}>*</span>}
+                    Source
                 </label>
-                <input
-                    type="text"
-                    className="form-control flex-1"
-                    id="source"
-                    name="source"
-                    value={humorFormData.source}
-                    onChange={e => updateHumorFormData('source', e.target.value)}
-                    required
-                />
+                <Dropdown options={[{label: 'Daily Dose of Humors', value: 'Daily Dose of Humors'}, ...humorBundleList.map(bundle => ({ label: bundle.bundle_name, value: bundle.uuid }))]} onChange={(bundle_uuid) => updateHumorFormData('source', bundle_uuid)} selectedDropdownValue={humorFormData.source} />
             </div>
             <div className="divider"></div>
             <div className="p-4">
@@ -182,4 +185,4 @@ const SimpleForm: React.FC<SimpleFormProps> = ({ submitType, humorFormData, upda
     );
 };
 
-export default SimpleForm;
+export default HumorDetail;

@@ -10,7 +10,7 @@ import bcrypt from "bcryptjs";
 
 const BundlePage: React.FC = () => {
     const [password, setPassword] = useState<string>('');
-    const [bundleList, setBundleList] = useState<string[] | null>(null);
+    const [bundleList, setBundleList] = useState<Bundle[] | null>(null);
     const [bundleDetail, setBundleDetail] = useState<Bundle | null>(null);
     const [submitType, setSubmitType] = useState<'update' | 'create' | null>(null);
     const [isHttpRunning, setIsHttpRunning] = useState<boolean>(false);
@@ -30,7 +30,6 @@ const BundlePage: React.FC = () => {
             );
             if (response.ok) {
                 const data = await response.json();
-                console.log('bundle list is: ', data);
                 setBundleList(data.bundleList);
             } else {
                 console.error("Failed to fetch UUIDs");
@@ -43,19 +42,17 @@ const BundlePage: React.FC = () => {
     }
 
     const createNewBundle = async () => {
-        setBundleDetail({ ...defaultBundle, uuid: uuidv4(), created_date: formatDateToYYYYMMDD(new Date()) });
+        setBundleDetail({ ...defaultBundle, uuid: uuidv4(), release_date: formatDateToYYYYMMDD(new Date()) });
         setSubmitType('create');
     }
 
     const updateBundleDetail = async (key: string, value: string | number | boolean, arg?: string | number) => {
-        console.log('key is: ', key, 'value is: ', value);
         switch (key) {
-            case 'bundle_name': case 'category': case 'created_date':
+            case 'bundle_name': case 'category': case 'release_date':
                 setBundleDetail({ ...bundleDetail!, [key]: value });
                 return;
             case 'humor_count':
                 if (isNaN(+value) || value === '') {
-                    console.log("humor count value is: ", value);
                     return;
                 }
                 setBundleDetail({ ...bundleDetail!, [key]: value as number });
@@ -85,7 +82,18 @@ const BundlePage: React.FC = () => {
         }
     }
 
-    const setFromExistingBundle = async (uuid: string) => {
+    const setFromExistingBundle = async (bundle: Bundle) => {
+        try {
+            setBundleDetail(bundle);
+            setSubmitType('update');
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setIsHttpRunning(false);
+        }
+    }
+
+    const setFromBundleUuid = async (uuid: string) => {
         try {
             setIsHttpRunning(true);
             const response = await fetch(
@@ -119,7 +127,7 @@ const BundlePage: React.FC = () => {
 
             // Append file to the FormData object
             formData.append("file", file); // 'file' is the key that will be used to access the file on the backend
-            formData.append("bundle_uuid", bundleDetail.uuid);
+            formData.append("uuid", bundleDetail.uuid);
             formData.append("method", method);
             formData.append("index", index.toString());
             formData.append("passwordHash", passwordHash);
@@ -131,7 +139,7 @@ const BundlePage: React.FC = () => {
             });
 
             if (response.ok) {
-                setFromExistingBundle(bundleDetail.uuid);
+                setFromBundleUuid(bundleDetail.uuid);
             } else {
                 console.error("Operation Failed");
                 throw Error();
@@ -160,12 +168,12 @@ const BundlePage: React.FC = () => {
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ bundle_uuid: bundleDetail.uuid, index, passwordHash }),
+                    body: JSON.stringify({ uuid: bundleDetail.uuid, index, passwordHash }),
                 }
             );
 
             if (response.ok) {
-                setFromExistingBundle(bundleDetail.uuid);
+                setFromBundleUuid(bundleDetail.uuid);
             } else {
                 console.error("Operation Failed");
                 throw Error();
@@ -190,7 +198,7 @@ const BundlePage: React.FC = () => {
 
             // Append file to the FormData object
             formData.append("file", file); // 'file' is the key that will be used to access the file on the backend
-            formData.append("bundle_uuid", bundleDetail.uuid);
+            formData.append("uuid", bundleDetail.uuid);
             formData.append("passwordHash", passwordHash);
 
             // Send the FormData object via a POST request
@@ -200,7 +208,7 @@ const BundlePage: React.FC = () => {
             });
 
             if (response.ok) {
-                setFromExistingBundle(bundleDetail.uuid);
+                setFromBundleUuid(bundleDetail.uuid);
             } else {
                 console.error("Operation Failed");
                 throw Error();

@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcryptjs";
 import { Container, Typography, Box } from "@mui/material";
 import CalendarComponent from "../components/Calendar"; // Correct relative path
 import Dropdown from "../components/Dropdown";
 import UUIDList from "../components/UUIDList";
-import SimpleForm from "../components/Form";
-import { HumorCategoryList, HumorCategory, firebaseFunctionUrl, HumorDataKey, defaultHumor, Humor, formatDateToYYYYMMDD } from '../util';
+import HumorDetail from "../components/HumorDetail";
+import { HumorCategoryList, HumorCategory, firebaseFunctionUrl, HumorDataKey, defaultHumor, Humor, formatDateToYYYYMMDD, Bundle } from '../util';
 
-const DailyPage: React.FC = () => {
+const HumorPage: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<HumorCategory | null>(null);
@@ -19,6 +19,29 @@ const DailyPage: React.FC = () => {
   const [submitType, setSubmitType] = useState<'update' | 'create' | null>(null);
   const [isHttpRunning, setIsHttpRunning] = useState<boolean>(false);
   const [httpMessage, setHttpMessage] = useState<string>('');
+  const [bundleList, setBundleList] = useState<Bundle[] | null>(null);
+
+  useEffect(() => {
+    fetchBundles();
+  }, []);
+
+  const fetchBundles = async () => {
+    try {
+        const response = await fetch(
+            `${firebaseFunctionUrl}/getBundleList` // fetch both active and inactive ones
+        );
+        if (response.ok) {
+            const data = await response.json();
+            setBundleList(data.bundleList);
+        } else {
+            console.error("Failed to fetch UUIDs");
+        }
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    } finally {
+        setIsHttpRunning(false);
+    }
+}
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
@@ -42,14 +65,16 @@ const DailyPage: React.FC = () => {
   }
 
   const createNewHumor = () => {
-    setHumorFormData({ ...defaultHumor, uuid: uuidv4(), index: humorList?.length || 0, created_date: formatDateToYYYYMMDD(selectedDate || new Date()), category: selectedCategory! });
+    setHumorFormData({ ...defaultHumor, uuid: uuidv4(), index: humorList?.length || 0, release_date: formatDateToYYYYMMDD(selectedDate || new Date()), category: selectedCategory! });
     setSubmitType('create');
   }
 
-  const updateHumorFormData = (key: HumorDataKey, value: string | number, arg?: string | number) => {
-    console.log(arg);
+  const updateHumorFormData = (key: HumorDataKey, value: string | number | boolean, arg?: string | number) => {
     switch (key) {
-      case 'author': case 'category': case 'context': case 'created_date': case 'punchline': case 'sender': case 'source': case 'uuid':
+      case 'active':
+        setHumorFormData({ ...defaultHumor, ...humorFormData, [key]: value as boolean });
+        return;
+      case 'author': case 'category': case 'context': case 'release_date': case 'punchline': case 'sender': case 'source': case 'uuid':
         setHumorFormData({ ...defaultHumor, ...humorFormData, [key]: value });
         return;
       case 'index':
@@ -108,17 +133,15 @@ const DailyPage: React.FC = () => {
   }
 
   const fetchUuids = async (category: string) => {
-    console.log('fetchUuid');
     if (category && selectedDate) {
       try {
         setHumorList(null);
         setIsHttpRunning(true);
         const response = await fetch(
-          `${firebaseFunctionUrl}/getDailyHumors?category=${category}&date=${formatDateToYYYYMMDD(selectedDate)}`
+          `${firebaseFunctionUrl}/getHumors?category=${category}&date=${formatDateToYYYYMMDD(selectedDate)}`
         );
         if (response.ok) {
           const data = await response.json();
-          console.log('data is: ', data);
           setHumorList(data.humorList.map((humor: Humor) => humor));
         } else {
           console.error("Failed to fetch UUIDs");
@@ -155,7 +178,7 @@ const DailyPage: React.FC = () => {
       {selectedDate &&
         <Box mb={4}>
           <span className="subheading">Choose Category</span>
-          <Dropdown options={HumorCategoryList} onCategoryChange={handleCategoryChange} selectedDropdownValue={selectedCategory} />
+          <Dropdown options={HumorCategoryList.map(category => ({label: category, value: category}))} onChange={handleCategoryChange} selectedDropdownValue={selectedCategory} />
           <br />
         </Box>}
       {selectedDate && selectedCategory &&
@@ -171,7 +194,7 @@ const DailyPage: React.FC = () => {
       {submitType &&
         <Box mb={4}>
           <span className="subheading">Update/Add Humor Details</span>
-          {humorFormData != null && <SimpleForm submitType={submitType} humorFormData={humorFormData} updateHumorFormData={updateHumorFormData} handleSubmit={handleSubmit} isHttpRunning={isHttpRunning} />}
+          {humorFormData != null && <HumorDetail humorBundleList={bundleList || []} submitType={submitType} humorFormData={humorFormData} updateHumorFormData={updateHumorFormData} handleSubmit={handleSubmit} isHttpRunning={isHttpRunning} />}
         </Box>}
       <div>
         {httpMessage}
@@ -180,4 +203,4 @@ const DailyPage: React.FC = () => {
   );
 };
 
-export default DailyPage;
+export default HumorPage;
