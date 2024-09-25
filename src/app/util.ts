@@ -14,11 +14,12 @@ const HumorCategoryList = [
 ] as const;
 
 const HumorDataKeyList = [
+  'active',
   'author', // empty string will be treated as null, vise versa
   'category',
   'context',
   'context_list', // empty list will be treated as null, vise versa
-  'created_date', // should be in format of yyyy-mm-dd
+  'release_date', // should be in format of yyyy-mm-dd
   'index',
   'punchline', // empty string will be treated as null, vise versa
   'sender',
@@ -31,11 +32,12 @@ type HumorDataKey = typeof HumorDataKeyList[number];
 type DateString = `${number}${number}${number}${number}-${number}${number}-${number}${number}`;
 
 interface Humor {
+    active: boolean,
     author: string, // empty string will be treated as null, vise versa
     category: HumorCategory,
     context: string,
     context_list: string[], // empty list will be treated as null, vise versa
-    created_date: DateString, // should be in format of yyyy-mm-dd
+    release_date: DateString, // should be in format of yyyy-mm-dd
     index: number,
     punchline: string, // empty string will be treated as null, vise versa
     sender: string,
@@ -44,11 +46,12 @@ interface Humor {
   }
 
 const defaultHumor: Humor = {
+  active: true,
   author: '', // empty string will be treated as null, vise versa
   category: HumorCategoryList[0],
   context: '',
   context_list: [], // empty list will be treated as null, vise versa
-  created_date: '2024-01-01', // should be in format of yyyy-mm-dd
+  release_date: '2024-01-01', // should be in format of yyyy-mm-dd
   index: 0,
   punchline: '', // empty string will be treated as null, vise versa
   sender: 'Board Collie',
@@ -77,11 +80,37 @@ function validateHumor(humor: Humor): string[] {
   if (humor.source.trim() === '') {
     invalid_fields.push('source');
   }
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(humor.created_date)) {
-    invalid_fields.push('created_date');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(humor.release_date)) {
+    invalid_fields.push('release_date');
   }
   return invalid_fields;
 }
 
-export { HumorCategoryList, firebaseFunctionUrl, defaultHumor, formatDateToYYYYMMDD, validateHumor };
-export type { Humor, HumorDataKey, HumorCategory };
+interface Bundle {
+  active: boolean,
+  bundle_name: string,
+  category: HumorCategory,
+  cover_img_list: string[],
+  release_date: DateString,
+  humor_count: number,
+  language_code: string,
+  set_list: string[],
+  thumbnail_path: string,
+  uuid: string,
+}
+
+const defaultBundle: Bundle = {
+  active: true,
+  bundle_name: '',
+  category: 'DAD_JOKES',
+  cover_img_list: [],
+  release_date: '2024-01-01',
+  humor_count: 100,
+  language_code: 'EN',
+  set_list: [],
+  thumbnail_path: '',
+  uuid: '',
+};
+
+export { HumorCategoryList, firebaseFunctionUrl, defaultHumor, formatDateToYYYYMMDD, validateHumor, defaultBundle };
+export type { Humor, HumorDataKey, HumorCategory, Bundle };
