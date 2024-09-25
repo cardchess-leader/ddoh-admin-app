@@ -12,6 +12,9 @@ const nextConfig = {
     config.resolve.alias['@'] = path.resolve(__dirname, 'src');
     return config;
   },
+  images: {
+    domains: ['storage.googleapis.com'],  // Allow images from this domain
+  },
 };
 
 export default nextConfig;
