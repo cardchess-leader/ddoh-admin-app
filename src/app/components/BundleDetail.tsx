@@ -4,6 +4,7 @@
 import React from 'react';
 import { HumorCategoryList, Bundle } from '../util';
 import Dropdown from "./Dropdown";
+import Image from 'next/image';
 
 interface BundleDetailProps {
     bundleDetail: Bundle
@@ -74,7 +75,13 @@ const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleD
                 <div className="flex-1">
                     {bundleDetail.cover_img_list.map((img_url, index) => (
                         <div key={index} className='context-list-row flex' style={{ alignItems: "center" }}>
-                            <img style={{ width: "50px", height: "50px", overflow: "hidden", marginRight: "25px" }} src={img_url} alt={img_url} />
+                            <Image 
+                                src={img_url} 
+                                alt={img_url} 
+                                width={50} 
+                                height={50} 
+                                style={{ marginRight: "25px", overflow: "hidden" }}
+                                />
                             <div style={{ flexGrow: 1, position: "relative", display: "inline-block" }}>
                                 <input
                                     type="text"
