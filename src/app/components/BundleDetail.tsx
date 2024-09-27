@@ -177,6 +177,18 @@ const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleD
                     </button>
                 </div>
             </div>
+            <div className="divider"></div>
+            <div className="mb-3 p-4 flex">
+                <label htmlFor="uuid" className="form-label">
+                    Product ID
+                </label>
+                <input
+                    type="text"
+                    className="form-control flex-1"
+                    value={bundleDetail.product_id}
+                    onChange={e => updateBundleDetail('product_id', e.target.value)}
+                />
+            </div>
             <div className="p-4">
                 <button className={`btn btn-primary save ${submitType}`} onClick={handleSubmit} disabled={isHttpRunning}>
                     {isHttpRunning ? 'Please Wait...' : submitType.toUpperCase()}
