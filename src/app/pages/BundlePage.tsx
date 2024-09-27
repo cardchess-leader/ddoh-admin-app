@@ -52,7 +52,7 @@ const BundlePage: React.FC<BundlePageProps> = ({password, isHttpRunning, setIsHt
 
     const updateBundleDetail = async (key: string, value: string | number | boolean, arg?: string | number) => {
         switch (key) {
-            case 'bundle_name': case 'category': case 'release_date':
+            case 'bundle_name': case 'bundle_description': case 'category': case 'release_date':
                 setBundleDetail({ ...bundleDetail!, [key]: value });
                 return;
             case 'humor_count':
@@ -188,41 +188,6 @@ const BundlePage: React.FC<BundlePageProps> = ({password, isHttpRunning, setIsHt
         }
     };
 
-    const updateThumbnailImage = async (file: File | null) => {
-        if (!bundleDetail || !file) {
-            return;
-        }
-        try {
-            setIsHttpRunning(true);
-            const requestUrl = `${firebaseFunctionUrl}/updateThumbnailImage`;
-
-            // Create FormData object to hold both the file and other fields
-            const formData = new FormData();
-            const passwordHash = await bcrypt.hash(password, 10);
-
-            // Append file to the FormData object
-            formData.append("file", file); // 'file' is the key that will be used to access the file on the backend
-            formData.append("uuid", bundleDetail.uuid);
-            formData.append("passwordHash", passwordHash);
-
-            // Send the FormData object via a POST request
-            const response = await fetch(requestUrl, {
-                method: "POST",
-                body: formData, // No need for headers when using FormData, fetch sets them automatically
-            });
-
-            if (response.ok) {
-                setFromBundleUuid(bundleDetail.uuid);
-            } else {
-                console.error("Operation Failed");
-                throw Error();
-            }
-        } catch (error) {
-            console.error("Operation Failed", error);
-            setIsHttpRunning(false);
-        }
-    }
-
     const handleSubmit = async () => {
         try {
             setIsHttpRunning(true);
@@ -278,7 +243,7 @@ const BundlePage: React.FC<BundlePageProps> = ({password, isHttpRunning, setIsHt
                 <br />
             </Box>
             {
-                (submitType && bundleDetail) && <BundleDetail bundleDetail={bundleDetail} updateBundleDetail={updateBundleDetail} updateCoverImage={updateCoverImage} removeCoverImage={removeCoverImage} submitType={submitType} updateThumbnailImage={updateThumbnailImage} isHttpRunning={isHttpRunning} handleSubmit={handleSubmit} />
+                (submitType && bundleDetail) && <BundleDetail bundleDetail={bundleDetail} updateBundleDetail={updateBundleDetail} updateCoverImage={updateCoverImage} removeCoverImage={removeCoverImage} submitType={submitType} isHttpRunning={isHttpRunning} handleSubmit={handleSubmit} />
             }
             <div>
                 {httpMessage}

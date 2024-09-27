@@ -6,7 +6,7 @@ const HumorCategoryList = [
     "ONE_LINERS",
     "DARK_HUMORS",
     "TRICKY_RIDDLES",
-    "OX_QUIZ",
+    "TRIVIA_QUIZ",
     "FUNNY_QUOTES",
     "STORY_JOKES",
     "DETECTIVE_PUZZLES",
@@ -89,26 +89,28 @@ function validateHumor(humor: Humor): string[] {
 interface Bundle {
   active: boolean,
   bundle_name: string,
+  bundle_description: string,
   category: HumorCategory,
   cover_img_list: string[],
   release_date: DateString,
   humor_count: number,
   language_code: string,
   set_list: string[],
-  thumbnail_path: string,
+  product_id: string,
   uuid: string,
 }
 
 const defaultBundle: Bundle = {
   active: true,
   bundle_name: '',
+  bundle_description: '',
   category: 'DAD_JOKES',
   cover_img_list: [],
   release_date: '2024-01-01',
   humor_count: 100,
   language_code: 'EN',
   set_list: [],
-  thumbnail_path: '',
+  product_id: '',
   uuid: '',
 };
 

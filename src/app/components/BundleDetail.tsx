@@ -11,14 +11,13 @@ interface BundleDetailProps {
     updateBundleDetail: (key: string, value: string | number | boolean, arg?: string | number) => void
     updateCoverImage: (file: File | null, index: number, method: string) => void
     removeCoverImage: (index: number) => void
-    updateThumbnailImage: (file: File | null) => void
     submitType: 'create' | 'update';
     isHttpRunning: boolean;
     handleSubmit: () => void;
 }
 
 
-const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleDetail, updateCoverImage, removeCoverImage, updateThumbnailImage, submitType, isHttpRunning, handleSubmit }) => {
+const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleDetail, updateCoverImage, removeCoverImage, submitType, isHttpRunning, handleSubmit }) => {
     return (
         <div className="form border rounded shadow-sm">
             <div className="mb-3 p-4 flex">
@@ -43,6 +42,21 @@ const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleD
                     className="form-control flex-1"
                     value={bundleDetail.bundle_name}
                     onChange={e => updateBundleDetail('bundle_name', e.target.value)}
+                />
+            </div>
+            <div className="divider"></div>
+            <div className="mb-3 p-4 flex">
+                <label htmlFor="context" className="form-label">
+                    Bundle Description
+                </label>
+                <textarea
+                    className="form-control flex-1"
+                    id="context"
+                    name="context"
+                    value={bundleDetail.bundle_description}
+                    onChange={e => updateBundleDetail('bundle_description', e.target.value)}
+                    rows={3}
+                    required
                 />
             </div>
             <div className="divider"></div>
@@ -104,7 +118,7 @@ const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleD
             </div>
             <div className="mb-3 p-4 flex">
                 <label htmlFor="release_date" className="form-label">
-                    Created Date
+                    Release Date
                 </label>
                 <input
                     type="text"
@@ -161,23 +175,6 @@ const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleD
                     <button className="btn btn-primary add-to-context-list" onClick={() => updateBundleDetail('set_list', '', 'add')}>
                         Add To Set List
                     </button>
-                </div>
-            </div>
-            <div className="divider"></div>
-            <div className="mb-3 p-4 flex">
-                <label htmlFor="sender" className="form-label">
-                    Thumbnail Path
-                </label>
-                <div style={{ position: "relative", width: "100%", height: "35px"}}>
-                    <input
-                        type="text"
-                        className="form-control flex-1"
-                        style={{ width: "100%", height: "100%" }}
-                        value={bundleDetail.thumbnail_path}
-                        disabled
-                    />
-                    <input id="thumbnail" type="file" style={{ display: "none" }} onChange={e => updateThumbnailImage(e.target.files?.[0] ?? null)} accept="image/*" disabled={submitType === "create"} />
-                    <label htmlFor="thumbnail" style={{ position: "absolute", width: "100%", height: "100%", left: 0, top: 0, cursor: "pointer" }}></label>
                 </div>
             </div>
             <div className="p-4">
