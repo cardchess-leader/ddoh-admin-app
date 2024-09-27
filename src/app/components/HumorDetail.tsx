@@ -126,7 +126,7 @@ const HumorDetail: React.FC<HumorDetailProps> = ({ submitType, humorFormData, up
             </div>
             <div className="mb-3 p-4 flex">
                 <label htmlFor="release_date" className="form-label">
-                    Created Date {invalid_field_list.includes('release_date') && <span style={{color: 'red'}}>*</span>}
+                    Release Date {invalid_field_list.includes('release_date') && <span style={{color: 'red'}}>*</span>}
                 </label>
                 <input
                     type="text"
