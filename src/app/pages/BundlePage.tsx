@@ -8,12 +8,16 @@ import { firebaseFunctionUrl, Bundle, defaultBundle, formatDateToYYYYMMDD } from
 import BundleDetail from "../components/BundleDetail";
 import bcrypt from "bcryptjs";
 
-const BundlePage: React.FC = () => {
-    const [password, setPassword] = useState<string>('');
+interface BundlePageProps {
+    password: string;
+    isHttpRunning: boolean;
+    setIsHttpRunning: (isRunning: boolean) => void;
+  }
+
+const BundlePage: React.FC<BundlePageProps> = ({password, isHttpRunning, setIsHttpRunning}) => {
     const [bundleList, setBundleList] = useState<Bundle[] | null>(null);
     const [bundleDetail, setBundleDetail] = useState<Bundle | null>(null);
     const [submitType, setSubmitType] = useState<'update' | 'create' | null>(null);
-    const [isHttpRunning, setIsHttpRunning] = useState<boolean>(false);
     const [httpMessage, setHttpMessage] = useState<string>('');
 
     useEffect(() => {
@@ -247,6 +251,9 @@ const BundlePage: React.FC = () => {
                 console.error(`${submitType} operation Failed`);
                 setHttpMessage(`${submitType} operation Failed`);
             }
+            const uuid = bundleDetail!.uuid;
+            fetchBundles();
+            setFromBundleUuid(uuid);
         } catch (error) {
             console.error(`${submitType} operation Failed`, error);
             setHttpMessage(`${submitType} operation Failed, ${error}`);
@@ -261,16 +268,6 @@ const BundlePage: React.FC = () => {
                 <span className="heading">Daily Dose of Humors Bundle Editor</span>
             </Typography>
             <br />
-            <Box mb={4}>
-                <span className="subheading">Enter Password</span>
-                <input
-                    type="password"
-                    className="form-control flex-1"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                />
-                <br />
-            </Box>
             <Box mb={4}>
                 <span className="subheading">Select Bundles</span><button id='refresh' onClick={() => fetchBundles()}>&#x1F503;</button>
                 <div>

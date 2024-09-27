@@ -10,14 +10,18 @@ import UUIDList from "../components/UUIDList";
 import HumorDetail from "../components/HumorDetail";
 import { HumorCategoryList, HumorCategory, firebaseFunctionUrl, HumorDataKey, defaultHumor, Humor, formatDateToYYYYMMDD, Bundle } from '../util';
 
-const HumorPage: React.FC = () => {
-  const [password, setPassword] = useState<string>('');
+interface HumorPageProps {
+  password: string;
+  isHttpRunning: boolean;
+  setIsHttpRunning: (isRunning: boolean) => void;
+}
+
+const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHttpRunning }) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<HumorCategory | null>(null);
   const [humorList, setHumorList] = useState<Humor[] | null>(null)
   const [humorFormData, setHumorFormData] = useState<Humor | null>(null);
   const [submitType, setSubmitType] = useState<'update' | 'create' | null>(null);
-  const [isHttpRunning, setIsHttpRunning] = useState<boolean>(false);
   const [httpMessage, setHttpMessage] = useState<string>('');
   const [bundleList, setBundleList] = useState<Bundle[] | null>(null);
 
@@ -113,7 +117,7 @@ const HumorPage: React.FC = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ ...humorFormData!, date: formatDateToYYYYMMDD(selectedDate || new Date()), passwordHash }),
+          body: JSON.stringify({ ...humorFormData!, passwordHash }),
         }
       );
       if (response.ok) {
@@ -129,6 +133,7 @@ const HumorPage: React.FC = () => {
       setHttpMessage(`${submitType} operation Failed, ${error}`);
     } finally {
       setIsHttpRunning(false);
+      fetchUuids(selectedCategory!);
     }
   }
 
@@ -160,16 +165,6 @@ const HumorPage: React.FC = () => {
         <span className="heading">Daily Dose of Humors Daily Editor</span>
       </Typography>
       <br />
-      <Box mb={4}>
-        <span className="subheading">Enter Password</span>
-        <input
-          type="password"
-          className="form-control flex-1"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-        />
-        <br />
-      </Box>
       <Box mb={4}>
         <span className="subheading">Select Date</span>
         <CalendarComponent onDateChange={handleDateChange} />
