@@ -52,7 +52,7 @@ const BundlePage: React.FC<BundlePageProps> = ({password, isHttpRunning, setIsHt
 
     const updateBundleDetail = async (key: string, value: string | number | boolean, arg?: string | number) => {
         switch (key) {
-            case 'bundle_name': case 'bundle_description': case 'category': case 'release_date':
+            case 'bundle_name': case 'bundle_description': case 'category': case 'release_date': case 'product_id':
                 setBundleDetail({ ...bundleDetail!, [key]: value });
                 return;
             case 'humor_count':
