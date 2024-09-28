@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Typography, Box } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 import BundleList from "../components/BundleList";
-import { firebaseFunctionUrl, Bundle, defaultBundle, formatDateToYYYYMMDD } from '../util';
+import { firebaseFunctionUrl, Bundle, defaultBundle, formatDateToYYYYMMDD, BundleSet } from '../util';
 import BundleDetail from "../components/BundleDetail";
 import bcrypt from "bcryptjs";
 
@@ -16,13 +16,36 @@ interface BundlePageProps {
 
 const BundlePage: React.FC<BundlePageProps> = ({password, isHttpRunning, setIsHttpRunning}) => {
     const [bundleList, setBundleList] = useState<Bundle[] | null>(null);
+    const [bundleSetList, setBundleSetList] = useState<BundleSet[]>([]);
     const [bundleDetail, setBundleDetail] = useState<Bundle | null>(null);
     const [submitType, setSubmitType] = useState<'update' | 'create' | null>(null);
     const [httpMessage, setHttpMessage] = useState<string>('');
 
     useEffect(() => {
         fetchBundles();
+        fetchBundleSetList();
     }, []);
+
+
+    const fetchBundleSetList = async () => {
+        try {
+            setIsHttpRunning(true);
+            const response = await fetch(
+                `${firebaseFunctionUrl}/getBundleSetList` // fetch both active and inactive ones
+            );
+            if (response.ok) {
+                const data = await response.json();
+                setBundleSetList(data.bundleSetList);
+            } else {
+                console.error("Failed to fetch set lists");
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setIsHttpRunning(false);
+        }
+    }
+
 
     const fetchBundles = async () => {
         try {
@@ -243,7 +266,7 @@ const BundlePage: React.FC<BundlePageProps> = ({password, isHttpRunning, setIsHt
                 <br />
             </Box>
             {
-                (submitType && bundleDetail) && <BundleDetail bundleDetail={bundleDetail} updateBundleDetail={updateBundleDetail} updateCoverImage={updateCoverImage} removeCoverImage={removeCoverImage} submitType={submitType} isHttpRunning={isHttpRunning} handleSubmit={handleSubmit} />
+                (submitType && bundleDetail) && <BundleDetail bundleDetail={bundleDetail} updateBundleDetail={updateBundleDetail} updateCoverImage={updateCoverImage} removeCoverImage={removeCoverImage} submitType={submitType} isHttpRunning={isHttpRunning} handleSubmit={handleSubmit} bundleSetList={bundleSetList} />
             }
             <div>
                 {httpMessage}
