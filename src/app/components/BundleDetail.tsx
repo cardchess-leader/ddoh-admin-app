@@ -2,7 +2,7 @@
 
 // import React, { useState } from 'react';
 import React from 'react';
-import { HumorCategoryList, Bundle } from '../util';
+import { HumorCategoryList, Bundle, BundleSet } from '../util';
 import Dropdown from "./Dropdown";
 import Image from 'next/image';
 
@@ -14,10 +14,11 @@ interface BundleDetailProps {
     submitType: 'create' | 'update';
     isHttpRunning: boolean;
     handleSubmit: () => void;
+    bundleSetList: BundleSet[];
 }
 
 
-const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleDetail, updateCoverImage, removeCoverImage, submitType, isHttpRunning, handleSubmit }) => {
+const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleDetail, updateCoverImage, removeCoverImage, submitType, isHttpRunning, handleSubmit, bundleSetList }) => {
     return (
         <div className="form border rounded shadow-sm">
             <div className="mb-3 p-4 flex">
@@ -160,15 +161,11 @@ const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleD
                     Set List
                 </label>
                 <div className="flex-1">
-                    {bundleDetail.set_list.map((set_name, index) => (
+                    {bundleDetail.set_list.map((setUuid, index) => (
                         <div key={index} className='context-list-row flex' style={{ height: "35px" }}>
-                            <input
-                                type="text"
-                                className="form-control flex-1"
-                                value={set_name}
-                                onChange={e => updateBundleDetail('set_list', e.target.value, index)}
-                                required
-                            />
+                            <div style={{ flexGrow: 1 }}>
+                                <Dropdown options={bundleSetList.map(bundleSet => ({label: bundleSet.title, value: bundleSet.uuid}))} onChange={(setUuid) => updateBundleDetail('set_list', setUuid, index)} selectedDropdownValue={setUuid} />
+                            </div>
                             <button className="center-child" style={{ color: "white" }}onClick={() => updateBundleDetail('set_list', index, 'remove')}>Remove</button>
                         </div>
                     ))}
