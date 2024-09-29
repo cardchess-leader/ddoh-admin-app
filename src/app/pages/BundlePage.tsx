@@ -75,23 +75,23 @@ const BundlePage: React.FC<BundlePageProps> = ({password, isHttpRunning, setIsHt
 
     const updateBundleDetail = async (key: string, value: string | number | boolean, arg?: string | number) => {
         switch (key) {
-            case 'bundle_name': case 'bundle_description': case 'category': case 'release_date': case 'product_id':
-                setBundleDetail({ ...bundleDetail!, [key]: value });
+            case 'title': case 'description': case 'category': case 'release_date': case 'product_id':
+                setBundleDetail({ ...defaultBundle, ...bundleDetail!, [key]: value });
                 return;
             case 'humor_count':
                 if (isNaN(+value) || value === '') {
                     return;
                 }
-                setBundleDetail({ ...bundleDetail!, [key]: value as number });
+                setBundleDetail({ ...defaultBundle, ...bundleDetail!, [key]: value as number });
                 return;
             case 'language_code':
                 if (typeof value !== 'string' || value.length > 2) {
                     return;
                 }
-                setBundleDetail({ ...bundleDetail!, [key]: value });
+                setBundleDetail({ ...defaultBundle, ...bundleDetail!, [key]: value });
                 return;
             case 'set_list':
-                const newBundleDetail = { ...bundleDetail! };
+                const newBundleDetail = { ...defaultBundle, ...bundleDetail! };
                 if (arg === 'add') {
                     newBundleDetail[key].push('');
                 } else if (arg === 'remove') {
@@ -104,7 +104,7 @@ const BundlePage: React.FC<BundlePageProps> = ({password, isHttpRunning, setIsHt
                 setBundleDetail(newBundleDetail);
                 return;
             case 'active':
-                setBundleDetail({ ...bundleDetail!, [key]: value as boolean });
+                setBundleDetail({ ...defaultBundle, ...bundleDetail!, [key]: value as boolean });
                 return;
         }
     }

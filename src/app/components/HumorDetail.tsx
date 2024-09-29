@@ -173,7 +173,7 @@ const HumorDetail: React.FC<HumorDetailProps> = ({ submitType, humorFormData, up
                 <label htmlFor="source" className="form-label">
                     Source
                 </label>
-                <Dropdown options={[{label: 'Daily Dose of Humors', value: 'Daily Dose of Humors'}, ...humorBundleList.map(bundle => ({ label: bundle.bundle_name, value: bundle.uuid }))]} onChange={(bundle_uuid) => updateHumorFormData('source', bundle_uuid)} selectedDropdownValue={humorFormData.source} />
+                <Dropdown options={[{label: 'Daily Dose of Humors', value: 'Daily Dose of Humors'}, ...humorBundleList.map(bundle => ({ label: bundle.title, value: bundle.uuid }))]} onChange={(bundle_uuid) => updateHumorFormData('source', bundle_uuid)} selectedDropdownValue={humorFormData.source} />
             </div>
             <div className="divider"></div>
             <div className="p-4">

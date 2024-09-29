@@ -88,8 +88,8 @@ function validateHumor(humor: Humor): string[] {
 
 interface Bundle {
   active: boolean,
-  bundle_name: string,
-  bundle_description: string,
+  title: string,
+  description: string,
   category: HumorCategory,
   cover_img_list: string[],
   release_date: DateString,
@@ -102,8 +102,8 @@ interface Bundle {
 
 const defaultBundle: Bundle = {
   active: true,
-  bundle_name: '',
-  bundle_description: '',
+  title: '',
+  description: '',
   category: 'DAD_JOKES',
   cover_img_list: [],
   release_date: '2024-01-01',

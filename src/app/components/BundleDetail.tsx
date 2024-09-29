@@ -36,26 +36,26 @@ const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleD
             <div className="divider"></div>
             <div className="mb-3 p-4 flex">
                 <label htmlFor="uuid" className="form-label">
-                    Bundle Name
+                    Title
                 </label>
                 <input
                     type="text"
                     className="form-control flex-1"
-                    value={bundleDetail.bundle_name}
-                    onChange={e => updateBundleDetail('bundle_name', e.target.value)}
+                    value={bundleDetail.title}
+                    onChange={e => updateBundleDetail('title', e.target.value)}
                 />
             </div>
             <div className="divider"></div>
             <div className="mb-3 p-4 flex">
                 <label htmlFor="context" className="form-label">
-                    Bundle Description
+                    Description
                 </label>
                 <textarea
                     className="form-control flex-1"
                     id="context"
                     name="context"
-                    value={bundleDetail.bundle_description}
-                    onChange={e => updateBundleDetail('bundle_description', e.target.value)}
+                    value={bundleDetail.description}
+                    onChange={e => updateBundleDetail('description', e.target.value)}
                     rows={3}
                     required
                 />
