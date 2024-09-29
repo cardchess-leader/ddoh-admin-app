@@ -24,6 +24,7 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
   const [submitType, setSubmitType] = useState<'update' | 'create' | null>(null);
   const [httpMessage, setHttpMessage] = useState<string>('');
   const [bundleList, setBundleList] = useState<Bundle[] | null>(null);
+  const [bulkUploadFileName, setBulkUploadFileName] = useState<string>('');
 
   useEffect(() => {
     fetchBundles();
@@ -31,21 +32,21 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
 
   const fetchBundles = async () => {
     try {
-        const response = await fetch(
-            `${firebaseFunctionUrl}/getBundleList` // fetch both active and inactive ones
-        );
-        if (response.ok) {
-            const data = await response.json();
-            setBundleList(data.bundleList);
-        } else {
-            console.error("Failed to fetch UUIDs");
-        }
+      const response = await fetch(
+        `${firebaseFunctionUrl}/getBundleList` // fetch both active and inactive ones
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setBundleList(data.bundleList);
+      } else {
+        console.error("Failed to fetch UUIDs");
+      }
     } catch (error) {
-        console.error("Error fetching data:", error);
+      console.error("Error fetching data:", error);
     } finally {
-        setIsHttpRunning(false);
+      setIsHttpRunning(false);
     }
-}
+  }
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
@@ -137,6 +138,37 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
     }
   }
 
+  const humorBulkUpload = async () => {
+    try {
+      setIsHttpRunning(true);
+      const requestUrl = `${firebaseFunctionUrl}/humorBatchUpload`;
+      const passwordHash = await bcrypt.hash(password, 10);
+      const response = await fetch(
+        requestUrl,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ fileName: bulkUploadFileName, passwordHash }),
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setHttpMessage(data.message);
+      } else {
+        console.error(`${submitType} operation Failed`);
+        setHttpMessage('bulk upload operation Failed');
+      }
+    } catch (error) {
+      console.error(`${submitType} operation Failed`, error);
+      setHttpMessage(`bulk upload operation Failed, ${error}`);
+    } finally {
+      setIsHttpRunning(false);
+      fetchUuids(selectedCategory!);
+    }
+  }
+
   const fetchUuids = async (category: string) => {
     if (category && selectedDate) {
       try {
@@ -173,7 +205,7 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
       {selectedDate &&
         <Box mb={4}>
           <span className="subheading">Choose Category</span>
-          <Dropdown options={HumorCategoryList.map(category => ({label: category, value: category}))} onChange={handleCategoryChange} selectedDropdownValue={selectedCategory} />
+          <Dropdown options={HumorCategoryList.map(category => ({ label: category, value: category }))} onChange={handleCategoryChange} selectedDropdownValue={selectedCategory} />
           <br />
         </Box>}
       {selectedDate && selectedCategory &&
@@ -193,6 +225,21 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
         </Box>}
       <div>
         {httpMessage}
+      </div>
+      <div>
+        <input
+          type="text"
+          className="form-control flex-1"
+          id="release_date"
+          name="release_date"
+          value={bulkUploadFileName}
+          onChange={e => setBulkUploadFileName(e.target.value)}
+          required
+        />
+        <button className={`btn btn-primary save`} onClick={humorBulkUpload}>
+          Bulk Upload
+        </button>
+
       </div>
     </Container>
   );
