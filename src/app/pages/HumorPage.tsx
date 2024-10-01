@@ -24,7 +24,8 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
   const [submitType, setSubmitType] = useState<'update' | 'create' | null>(null);
   const [httpMessage, setHttpMessage] = useState<string>('');
   const [bundleList, setBundleList] = useState<Bundle[] | null>(null);
-  const [bulkUploadFileName, setBulkUploadFileName] = useState<string>('');
+  const [showDaily, setShowDaily] = useState<boolean>(true);
+  const [showBundle, setShowBundle] = useState<boolean>(true);
 
   useEffect(() => {
     fetchBundles();
@@ -138,37 +139,6 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
     }
   }
 
-  const humorBulkUpload = async () => {
-    try {
-      setIsHttpRunning(true);
-      const requestUrl = `${firebaseFunctionUrl}/humorBatchUpload`;
-      const passwordHash = await bcrypt.hash(password, 10);
-      const response = await fetch(
-        requestUrl,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ fileName: bulkUploadFileName, passwordHash }),
-        }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setHttpMessage(data.message);
-      } else {
-        console.error(`${submitType} operation Failed`);
-        setHttpMessage('bulk upload operation Failed');
-      }
-    } catch (error) {
-      console.error(`${submitType} operation Failed`, error);
-      setHttpMessage(`bulk upload operation Failed, ${error}`);
-    } finally {
-      setIsHttpRunning(false);
-      fetchUuids(selectedCategory!);
-    }
-  }
-
   const fetchUuids = async (category: string) => {
     if (category && selectedDate) {
       try {
@@ -190,6 +160,19 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
       }
     }
   };
+
+  const filterHumorList = (humorList: Humor[] | null) => {
+    if (!humorList) return [];
+    if (showDaily && !showBundle) {
+      return humorList.filter(humor => humor.source === "Daily Dose of Humors");
+    } else if (!showDaily && showBundle) {
+      return humorList.filter(humor => humor.source !== "Daily Dose of Humors");
+    } else if (!showDaily && !showBundle) {
+      return [];
+    } else {
+      return humorList;
+    }
+  }
 
   return (
     <Container maxWidth="md">
@@ -214,7 +197,35 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
           <div>
             <button className="add-humor" onClick={createNewHumor}>Add Humor</button>
             {!humorList && "Loading Humor List..."}
-            {humorList && <UUIDList humorList={humorList} setFromExistingHumor={setFromExistingHumor} />}
+            {humorList &&
+              <div>
+                <div style={{ display: "flex", alignItems: "center", marginTop: "10px" }}>
+                  <label className="form-label">
+                    Show Daily
+                  </label>
+                  <input
+                    type="checkbox"
+                    className="form-control"
+                    checked={showDaily}
+                    onChange={e => setShowDaily(e.target.checked)}
+                    style={{ width: "30px", height: "30px", marginRight: "10px" }}
+                  />
+                  <label className="form-label">
+                    Show Bundle
+                  </label>
+                  <input
+                    type="checkbox"
+                    className="form-control"
+                    checked={showBundle}
+                    onChange={e => setShowBundle(e.target.checked)}
+                    style={{ width: "30px", height: "30px" }}
+                  />
+                </div>
+                <div style={{ overflow: "scroll", maxHeight: "250px", marginTop: "10px" }}>
+                  <UUIDList humorList={filterHumorList(humorList)} setFromExistingHumor={setFromExistingHumor} />
+                </div>
+              </div>
+            }
           </div>
           <br />
         </Box>}
@@ -225,21 +236,6 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
         </Box>}
       <div>
         {httpMessage}
-      </div>
-      <div>
-        <input
-          type="text"
-          className="form-control flex-1"
-          id="release_date"
-          name="release_date"
-          value={bulkUploadFileName}
-          onChange={e => setBulkUploadFileName(e.target.value)}
-          required
-        />
-        <button className={`btn btn-primary save`} onClick={humorBulkUpload}>
-          Bulk Upload
-        </button>
-
       </div>
     </Container>
   );
