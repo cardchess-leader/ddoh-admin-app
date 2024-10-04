@@ -71,7 +71,7 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
   }
 
   const createNewHumor = () => {
-    setHumorFormData({ ...defaultHumor, uuid: uuidv4(), index: humorList?.length || 0, release_date: formatDateToYYYYMMDD(selectedDate || new Date()), category: selectedCategory! });
+    setHumorFormData({ ...defaultHumor, uuid: uuidv4(), index: (humorList?.length || 0) + 1, release_date: formatDateToYYYYMMDD(selectedDate || new Date()), category: selectedCategory! });
     setSubmitType('create');
   }
 
