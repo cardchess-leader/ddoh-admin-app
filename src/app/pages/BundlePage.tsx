@@ -82,7 +82,7 @@ const BundlePage: React.FC<BundlePageProps> = ({password, isHttpRunning, setIsHt
                 if (isNaN(+value) || value === '') {
                     return;
                 }
-                setBundleDetail({ ...defaultBundle, ...bundleDetail!, [key]: value as number });
+                setBundleDetail({ ...defaultBundle, ...bundleDetail!, [key]: +value }); // ensure int
                 return;
             case 'language_code':
                 if (typeof value !== 'string' || value.length > 2) {
