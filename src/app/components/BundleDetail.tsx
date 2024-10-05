@@ -176,7 +176,7 @@ const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleD
             </div>
             <div className="divider"></div>
             <div className="mb-3 p-4 flex">
-                <label htmlFor="uuid" className="form-label">
+                <label className="form-label">
                     Product ID
                 </label>
                 <input
@@ -184,6 +184,32 @@ const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleD
                     className="form-control flex-1"
                     value={bundleDetail.product_id}
                     onChange={e => updateBundleDetail('product_id', e.target.value)}
+                />
+            </div>
+            <div className="divider"></div>
+            <div className="mb-3 p-4 flex">
+                <label htmlFor="author" className="form-label">
+                    Preview Count
+                </label>
+                <input
+                    type="number"
+                    className="form-control flex-1"
+                    value={bundleDetail.humor_count}
+                    onChange={e => updateBundleDetail('preview_count', e.target.value)}
+                    required
+                />
+            </div>
+            <div className="divider"></div>
+            <div className="mb-3 p-4 flex">
+                <label className="form-label">
+                    Preview Show Punchline
+                </label>
+                <input
+                    type="checkbox"
+                    className="form-control"
+                    checked={bundleDetail.active}
+                    onChange={e => updateBundleDetail('preview_show_punchline_yn', e.target.checked)}
+                    style={{ width: "30px", height: "30px" }}
                 />
             </div>
             <div className="p-4">
