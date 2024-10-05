@@ -26,6 +26,7 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
   const [bundleList, setBundleList] = useState<Bundle[] | null>(null);
   const [showDaily, setShowDaily] = useState<boolean>(true);
   const [showBundle, setShowBundle] = useState<boolean>(true);
+  const [hideInactive, setHideInactive] = useState<boolean>(true);
 
   useEffect(() => {
     fetchBundles();
@@ -163,15 +164,16 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
 
   const filterHumorList = (humorList: Humor[] | null) => {
     if (!humorList) return [];
-    if (showDaily && !showBundle) {
-      return humorList.filter(humor => humor.source === "Daily Dose of Humors");
-    } else if (!showDaily && showBundle) {
-      return humorList.filter(humor => humor.source !== "Daily Dose of Humors");
-    } else if (!showDaily && !showBundle) {
-      return [];
-    } else {
-      return humorList;
+    if (!showDaily) {
+      humorList = humorList.filter(humor => humor.source !== 'Daily Dose of Humors');
     }
+    if (!showBundle) {
+      humorList = humorList.filter(humor => humor.source === 'Daily Dose of Humors');
+    }
+    if (hideInactive) {
+      humorList = humorList.filter(humor => humor.active === true);
+    }
+    return humorList;
   }
 
   return (
@@ -218,6 +220,16 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
                     className="form-control"
                     checked={showBundle}
                     onChange={e => setShowBundle(e.target.checked)}
+                    style={{ width: "30px", height: "30px", marginRight: "10px" }}
+                  />
+                  <label className="form-label">
+                    Hide Inactive
+                  </label>
+                  <input
+                    type="checkbox"
+                    className="form-control"
+                    checked={hideInactive}
+                    onChange={e => setHideInactive(e.target.checked)}
                     style={{ width: "30px", height: "30px" }}
                   />
                 </div>

@@ -97,6 +97,8 @@ interface Bundle {
   language_code: string,
   set_list: string[],
   product_id: string,
+  preview_count: number,
+  preview_show_punchline_yn: boolean,
   uuid: string,
 }
 
@@ -111,6 +113,8 @@ const defaultBundle: Bundle = {
   language_code: 'EN',
   set_list: [],
   product_id: '',
+  preview_count: 5,
+  preview_show_punchline_yn: false,
   uuid: '',
 };
 

@@ -75,22 +75,22 @@ const BundlePage: React.FC<BundlePageProps> = ({password, isHttpRunning, setIsHt
 
     const updateBundleDetail = async (key: string, value: string | number | boolean, arg?: string | number) => {
         switch (key) {
-            case 'title': case 'description': case 'category': case 'release_date': case 'product_id':
+            case 'title': case 'description': case 'category': case 'release_date': case 'product_id': // string values
                 setBundleDetail({ ...defaultBundle, ...bundleDetail!, [key]: value });
                 return;
-            case 'humor_count':
+            case 'humor_count': case 'preview_count': // int value
                 if (isNaN(+value) || value === '') {
                     return;
                 }
                 setBundleDetail({ ...defaultBundle, ...bundleDetail!, [key]: +value }); // ensure int
                 return;
-            case 'language_code':
+            case 'language_code': // 2 letter string value
                 if (typeof value !== 'string' || value.length > 2) {
                     return;
                 }
                 setBundleDetail({ ...defaultBundle, ...bundleDetail!, [key]: value });
                 return;
-            case 'set_list':
+            case 'set_list': // list of string value
                 const newBundleDetail = { ...defaultBundle, ...bundleDetail! };
                 if (arg === 'add') {
                     newBundleDetail[key].push('');
@@ -103,7 +103,7 @@ const BundlePage: React.FC<BundlePageProps> = ({password, isHttpRunning, setIsHt
                 }
                 setBundleDetail(newBundleDetail);
                 return;
-            case 'active':
+            case 'active': case 'preview_show_punchline_yn': // boolean value
                 setBundleDetail({ ...defaultBundle, ...bundleDetail!, [key]: value as boolean });
                 return;
         }
