@@ -194,7 +194,7 @@ const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleD
                 <input
                     type="number"
                     className="form-control flex-1"
-                    value={bundleDetail.humor_count}
+                    value={bundleDetail.preview_count}
                     onChange={e => updateBundleDetail('preview_count', e.target.value)}
                     required
                 />
@@ -207,7 +207,7 @@ const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleD
                 <input
                     type="checkbox"
                     className="form-control"
-                    checked={bundleDetail.active}
+                    checked={bundleDetail.preview_show_punchline_yn}
                     onChange={e => updateBundleDetail('preview_show_punchline_yn', e.target.checked)}
                     style={{ width: "30px", height: "30px" }}
                 />
