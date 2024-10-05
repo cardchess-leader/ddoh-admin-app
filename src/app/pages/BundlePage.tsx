@@ -111,7 +111,7 @@ const BundlePage: React.FC<BundlePageProps> = ({password, isHttpRunning, setIsHt
 
     const setFromExistingBundle = async (bundle: Bundle) => {
         try {
-            setBundleDetail(bundle);
+            setBundleDetail({...defaultBundle, ...bundle});
             setSubmitType('update');
         } catch (error) {
             console.error("Error fetching data:", error);
