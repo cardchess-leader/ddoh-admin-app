@@ -16,7 +16,7 @@ const BundleList: React.FC<BundleListProps> = ({ bundleList, setFromExistingBund
     <List>
       {bundleList.map((bundle) => (
         <ListItem className='uuid-item' key={bundle.uuid} component="button" onClick={() => setFromExistingBundle(bundle)}>
-          <ListItemText primary={bundle.uuid} />
+          <ListItemText primary={bundle.uuid} secondary={bundle.title} />
         </ListItem>
       ))}
     </List>
