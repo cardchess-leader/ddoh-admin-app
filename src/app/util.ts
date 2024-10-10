@@ -24,6 +24,7 @@ const HumorDataKeyList = [
   'punchline', // empty string will be treated as null, vise versa
   'sender',
   'source',
+  'ai_analysis',
   'uuid',
 ] as const;
 
@@ -42,6 +43,7 @@ interface Humor {
     punchline: string, // empty string will be treated as null, vise versa
     sender: string,
     source: string,
+    ai_analysis: string,
     uuid: string,
   }
 
@@ -56,6 +58,7 @@ const defaultHumor: Humor = {
   punchline: '', // empty string will be treated as null, vise versa
   sender: 'Board Collie',
   source: 'Daily Dose of Humors',
+  ai_analysis: '',
   uuid: '',
 };
 

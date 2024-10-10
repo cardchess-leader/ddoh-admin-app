@@ -125,6 +125,20 @@ const HumorDetail: React.FC<HumorDetailProps> = ({ submitType, humorFormData, up
                 />
             </div>
             <div className="mb-3 p-4 flex">
+                <label className="form-label">
+                    Humor Analysis
+                </label>
+                <textarea
+                    className="form-control flex-1"
+                    id="ai_analysis"
+                    name="ai_analysis"
+                    value={humorFormData.ai_analysis || ''}
+                    onChange={e => updateHumorFormData('ai_analysis', e.target.value)}
+                    rows={3}
+                    required
+                />
+            </div>
+            <div className="mb-3 p-4 flex">
                 <label htmlFor="release_date" className="form-label">
                     Release Date {invalid_field_list.includes('release_date') && <span style={{color: 'red'}}>*</span>}
                 </label>
