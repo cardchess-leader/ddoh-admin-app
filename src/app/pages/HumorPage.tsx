@@ -81,7 +81,7 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
       case 'active':
         setHumorFormData({ ...defaultHumor, ...humorFormData, [key]: value as boolean });
         return;
-      case 'author': case 'category': case 'context': case 'release_date': case 'punchline': case 'sender': case 'source': case 'uuid':
+      case 'author': case 'category': case 'context': case 'release_date': case 'punchline': case 'ai_analysis': case 'sender': case 'source': case 'uuid':
         setHumorFormData({ ...defaultHumor, ...humorFormData, [key]: value });
         return;
       case 'index':
