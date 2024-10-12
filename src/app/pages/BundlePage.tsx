@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Container, Typography, Box } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 import BundleList from "../components/BundleList";
@@ -20,18 +20,15 @@ const BundlePage: React.FC<BundlePageProps> = ({password, isHttpRunning, setIsHt
     const [submitType, setSubmitType] = useState<'update' | 'create' | null>(null);
     const [httpMessage, setHttpMessage] = useState<string>('');
 
-    useEffect(() => {
-        fetchBundles();
-    }, []);
-
-    const fetchBundles = async () => {
+    // Memoize fetchBundles using useCallback to avoid recreating the function on each render
+    const fetchBundles = useCallback(async () => {
         try {
             setBundleList(null);
             setBundleDetail(null);
             setIsHttpRunning(true);
-            const response = await fetch(
-                `${firebaseFunctionUrl}/getBundleList`
-            );
+            
+            const response = await fetch(`${firebaseFunctionUrl}/getBundleList`);
+            
             if (response.ok) {
                 const data = await response.json();
                 setBundleList(data.bundleList);
@@ -43,14 +40,19 @@ const BundlePage: React.FC<BundlePageProps> = ({password, isHttpRunning, setIsHt
         } finally {
             setIsHttpRunning(false);
         }
-    }
+    }, []); // Empty dependency array ensures this function is stable and doesn't change
+
+    // useEffect will run fetchBundles only once (on initial render)
+    useEffect(() => {
+        fetchBundles();
+    }, [fetchBundles]); // Safe to include fetchBundles in the dependency array now
 
     const createNewBundle = async () => {
         setBundleDetail({ ...defaultBundle, uuid: uuidv4(), release_date: formatDateToYYYYMMDD(new Date()) });
         setSubmitType('create');
     }
 
-    const updateBundleDetail = async (key: string, value: string | number | boolean, arg?: string | number) => {
+    const updateBundleDetail = async (key: string, value: string | number | boolean) => {
         switch (key) {
             case 'title': case 'description': case 'category': case 'release_date': case 'product_id': // string values
                 setBundleDetail({ ...defaultBundle, ...bundleDetail!, [key]: value });
