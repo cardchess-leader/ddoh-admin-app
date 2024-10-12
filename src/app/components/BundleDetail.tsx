@@ -2,7 +2,7 @@
 
 // import React, { useState } from 'react';
 import React from 'react';
-import { HumorCategoryList, Bundle, BundleSet } from '../util';
+import { HumorCategoryList, Bundle } from '../util';
 import Dropdown from "./Dropdown";
 import Image from 'next/image';
 

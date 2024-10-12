@@ -119,10 +119,5 @@ const defaultBundle: Bundle = {
   uuid: '',
 };
 
-interface BundleSet {
-  uuid: string,
-  title: string,
-};
-
 export { HumorCategoryList, firebaseFunctionUrl, defaultHumor, formatDateToYYYYMMDD, validateHumor, defaultBundle };
-export type { Humor, HumorDataKey, HumorCategory, Bundle, BundleSet };
+export type { Humor, HumorDataKey, HumorCategory, Bundle };

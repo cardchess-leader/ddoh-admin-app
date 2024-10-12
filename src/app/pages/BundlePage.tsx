@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Typography, Box } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 import BundleList from "../components/BundleList";
-import { firebaseFunctionUrl, Bundle, defaultBundle, formatDateToYYYYMMDD, BundleSet } from '../util';
+import { firebaseFunctionUrl, Bundle, defaultBundle, formatDateToYYYYMMDD } from '../util';
 import BundleDetail from "../components/BundleDetail";
 import bcrypt from "bcryptjs";
 
