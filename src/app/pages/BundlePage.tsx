@@ -16,36 +16,13 @@ interface BundlePageProps {
 
 const BundlePage: React.FC<BundlePageProps> = ({password, isHttpRunning, setIsHttpRunning}) => {
     const [bundleList, setBundleList] = useState<Bundle[] | null>(null);
-    const [bundleSetList, setBundleSetList] = useState<BundleSet[]>([]);
     const [bundleDetail, setBundleDetail] = useState<Bundle | null>(null);
     const [submitType, setSubmitType] = useState<'update' | 'create' | null>(null);
     const [httpMessage, setHttpMessage] = useState<string>('');
 
     useEffect(() => {
         fetchBundles();
-        fetchBundleSetList();
     }, []);
-
-
-    const fetchBundleSetList = async () => {
-        try {
-            setIsHttpRunning(true);
-            const response = await fetch(
-                `${firebaseFunctionUrl}/getBundleSetList` // fetch both active and inactive ones
-            );
-            if (response.ok) {
-                const data = await response.json();
-                setBundleSetList(data.bundleSetList);
-            } else {
-                console.error("Failed to fetch set lists");
-            }
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        } finally {
-            setIsHttpRunning(false);
-        }
-    }
-
 
     const fetchBundles = async () => {
         try {
@@ -89,19 +66,6 @@ const BundlePage: React.FC<BundlePageProps> = ({password, isHttpRunning, setIsHt
                     return;
                 }
                 setBundleDetail({ ...defaultBundle, ...bundleDetail!, [key]: value });
-                return;
-            case 'set_list': // list of string value
-                const newBundleDetail = { ...defaultBundle, ...bundleDetail! };
-                if (arg === 'add') {
-                    newBundleDetail[key].push('');
-                } else if (arg === 'remove') {
-                    const index = +value;
-                    newBundleDetail[key].splice(index, 1);
-                } else {
-                    const index = +(arg ?? 0);
-                    newBundleDetail[key][index] = String(value);
-                }
-                setBundleDetail(newBundleDetail);
                 return;
             case 'active': case 'preview_show_punchline_yn': // boolean value
                 setBundleDetail({ ...defaultBundle, ...bundleDetail!, [key]: value as boolean });
@@ -266,7 +230,7 @@ const BundlePage: React.FC<BundlePageProps> = ({password, isHttpRunning, setIsHt
                 <br />
             </Box>
             {
-                (submitType && bundleDetail) && <BundleDetail bundleDetail={bundleDetail} updateBundleDetail={updateBundleDetail} updateCoverImage={updateCoverImage} removeCoverImage={removeCoverImage} submitType={submitType} isHttpRunning={isHttpRunning} handleSubmit={handleSubmit} bundleSetList={bundleSetList} />
+                (submitType && bundleDetail) && <BundleDetail bundleDetail={bundleDetail} updateBundleDetail={updateBundleDetail} updateCoverImage={updateCoverImage} removeCoverImage={removeCoverImage} submitType={submitType} isHttpRunning={isHttpRunning} handleSubmit={handleSubmit} />
             }
             <div>
                 {httpMessage}

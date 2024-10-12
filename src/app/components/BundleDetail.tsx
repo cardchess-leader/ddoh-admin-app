@@ -14,11 +14,10 @@ interface BundleDetailProps {
     submitType: 'create' | 'update';
     isHttpRunning: boolean;
     handleSubmit: () => void;
-    bundleSetList: BundleSet[];
 }
 
 
-const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleDetail, updateCoverImage, removeCoverImage, submitType, isHttpRunning, handleSubmit, bundleSetList }) => {
+const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleDetail, updateCoverImage, removeCoverImage, submitType, isHttpRunning, handleSubmit }) => {
     return (
         <div className="form border rounded shadow-sm">
             <div className="mb-3 p-4 flex">
@@ -154,25 +153,6 @@ const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleD
                     onChange={e => updateBundleDetail('language_code', e.target.value)}
                     required
                 />
-            </div>
-            <div className="divider"></div>
-            <div className="mb-3 p-4 flex">
-                <label className="form-label">
-                    Set List
-                </label>
-                <div className="flex-1">
-                    {bundleDetail.set_list.map((setUuid, index) => (
-                        <div key={index} className='context-list-row flex' style={{ height: "35px" }}>
-                            <div style={{ flexGrow: 1 }}>
-                                <Dropdown options={bundleSetList.map(bundleSet => ({label: bundleSet.title, value: bundleSet.uuid}))} onChange={(setUuid) => updateBundleDetail('set_list', setUuid, index)} selectedDropdownValue={setUuid} />
-                            </div>
-                            <button className="center-child" style={{ color: "white" }}onClick={() => updateBundleDetail('set_list', index, 'remove')}>Remove</button>
-                        </div>
-                    ))}
-                    <button className="btn btn-primary add-to-context-list" onClick={() => updateBundleDetail('set_list', '', 'add')}>
-                        Add To Set List
-                    </button>
-                </div>
             </div>
             <div className="divider"></div>
             <div className="mb-3 p-4 flex">
