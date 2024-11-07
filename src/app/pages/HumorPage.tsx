@@ -27,6 +27,7 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
   const [showDaily, setShowDaily] = useState<boolean>(true);
   const [showBundle, setShowBundle] = useState<boolean>(true);
   const [hideInactive, setHideInactive] = useState<boolean>(true);
+  const [hideInactiveBundles, setHideInactiveBundles] = useState<boolean>(true);
 
   useEffect(() => {
     fetchBundles();
@@ -176,6 +177,13 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
     return humorList;
   }
 
+  const filterBundleList = () => {
+    if (hideInactiveBundles) {
+      return bundleList?.filter(bundle => bundle.active);
+    }
+    return bundleList;
+  }
+
   return (
     <Container maxWidth="md">
       <Typography variant="h4" gutterBottom>
@@ -232,6 +240,16 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
                     onChange={e => setHideInactive(e.target.checked)}
                     style={{ width: "30px", height: "30px" }}
                   />
+                  <label className="form-label">
+                    Hide Inactive Bundles
+                  </label>
+                  <input
+                    type="checkbox"
+                    className="form-control"
+                    checked={hideInactiveBundles}
+                    onChange={e => setHideInactiveBundles(e.target.checked)}
+                    style={{ width: "30px", height: "30px" }}
+                  />
                 </div>
                 <div style={{ overflow: "scroll", maxHeight: "250px", marginTop: "10px" }}>
                   <UUIDList humorList={filterHumorList(humorList)} setFromExistingHumor={setFromExistingHumor} />
@@ -244,7 +262,7 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
       {submitType &&
         <Box mb={4}>
           <span className="subheading">Update/Add Humor Details</span>
-          {humorFormData != null && <HumorDetail humorBundleList={bundleList || []} submitType={submitType} humorFormData={humorFormData} updateHumorFormData={updateHumorFormData} handleSubmit={handleSubmit} isHttpRunning={isHttpRunning} />}
+          {humorFormData != null && <HumorDetail humorBundleList={filterBundleList() || []} submitType={submitType} humorFormData={humorFormData} updateHumorFormData={updateHumorFormData} handleSubmit={handleSubmit} isHttpRunning={isHttpRunning} />}
         </Box>}
       <div>
         {httpMessage}
