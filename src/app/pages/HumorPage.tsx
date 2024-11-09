@@ -28,6 +28,7 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
   const [showBundle, setShowBundle] = useState<boolean>(true);
   const [hideInactive, setHideInactive] = useState<boolean>(true);
   const [hideInactiveBundles, setHideInactiveBundles] = useState<boolean>(true);
+  const [defaultSource, setDefaultSource] = useState<string>('Daily Dose of Humors');
 
   useEffect(() => {
     fetchBundles();
@@ -73,7 +74,7 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
   }
 
   const createNewHumor = () => {
-    setHumorFormData({ ...defaultHumor, uuid: uuidv4(), index: (filterHumorList(humorList).length) + 1, release_date: formatDateToYYYYMMDD(selectedDate || new Date()), category: selectedCategory! });
+    setHumorFormData({ ...defaultHumor, uuid: uuidv4(), index: (filterHumorList(humorList).length) + 1, release_date: formatDateToYYYYMMDD(selectedDate || new Date()), category: selectedCategory!, source: defaultSource || 'Daily Dose of Humors' });
     setSubmitType('create');
   }
 
@@ -201,6 +202,12 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
           <Dropdown options={HumorCategoryList.map(category => ({ label: category, value: category }))} onChange={handleCategoryChange} selectedDropdownValue={selectedCategory} />
           <br />
         </Box>}
+      {selectedDate &&
+      <Box mb={4}>
+        <span className="subheading">Select Default Source</span>
+        <Dropdown options={bundleList?.map(bundle => ({ label: bundle.title, value: bundle.uuid })) || [] } onChange={bundleUuid => setDefaultSource(bundleUuid)} selectedDropdownValue={defaultSource} />
+        <br />
+      </Box>}
       {selectedDate && selectedCategory &&
         <Box mb={4}>
           <span className="subheading">Select Humors</span><button id='refresh' onClick={() => fetchUuids(selectedCategory || '')}>&#x1F503;</button>
@@ -238,7 +245,7 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
                     className="form-control"
                     checked={hideInactive}
                     onChange={e => setHideInactive(e.target.checked)}
-                    style={{ width: "30px", height: "30px" }}
+                    style={{ width: "30px", height: "30px", marginRight: "10px" }}
                   />
                   <label className="form-label">
                     Hide Inactive Bundles
