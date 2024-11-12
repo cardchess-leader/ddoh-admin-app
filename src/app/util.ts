@@ -1,17 +1,19 @@
 const IS_PRODUCTION = true; // Set this to false for debugging
 
 const HumorCategoryList = [
-    "DAD_JOKES",
-    "DIALOG_JOKES",
-    "ONE_LINERS",
-    "DARK_HUMORS",
-    "TRICKY_RIDDLES",
-    "TRIVIA_QUIZ",
-    "FUNNY_QUOTES",
-    "STORY_JOKES",
-    "MYSTERY_PUZZLES",
-    "KNOCK_KNOCK_JOKES",
-    "YOUR_HUMORS",
+    'DAD_JOKES',
+    'DIALOG_JOKES',
+    'ONE_LINERS',
+    'DARK_HUMORS',
+    'TRICKY_RIDDLES',
+    'TRIVIA_QUIZ',
+    'FUNNY_QUOTES',
+    'STORY_JOKES',
+    'MYSTERY_PUZZLES',
+    'KNOCK_KNOCK_JOKES',
+    'YOUR_HUMORS',
+    'MISC_PUNCHLINE',
+    'MISC_NO_PUNCHLINE',
 ] as const;
 
 const HumorDataKeyList = [
