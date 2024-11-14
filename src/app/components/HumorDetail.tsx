@@ -66,7 +66,7 @@ const HumorDetail: React.FC<HumorDetailProps> = ({ submitType, humorFormData, up
                     Category
                 </label>
                 <div className="flex-1">
-                    <Dropdown options={HumorCategoryList.map(category => ({label: category, value: category}))} onChange={(category) => updateHumorFormData('category', category)} selectedDropdownValue={humorFormData.category} />
+                    <Dropdown options={HumorCategoryList.map(category => ({label: category, value: category}))} onChange={(category) => updateHumorFormData('category', category)} selectedDropdownValue={humorFormData.category} placeHolder='Select Category'/>
                 </div>
             </div>
             <div className="divider"></div>
@@ -187,7 +187,7 @@ const HumorDetail: React.FC<HumorDetailProps> = ({ submitType, humorFormData, up
                 <label htmlFor="source" className="form-label">
                     Source
                 </label>
-                <Dropdown options={[{label: 'Daily Dose of Humors', value: 'Daily Dose of Humors'}, ...humorBundleList.map(bundle => ({ label: bundle.title, value: bundle.uuid }))]} onChange={(bundle_uuid) => updateHumorFormData('source', bundle_uuid)} selectedDropdownValue={humorFormData.source} />
+                <Dropdown options={[{label: 'Daily Dose of Humors', value: 'Daily Dose of Humors'}, ...humorBundleList.map(bundle => ({ label: bundle.title, value: bundle.uuid }))]} onChange={(bundle_uuid) => updateHumorFormData('source', bundle_uuid)} selectedDropdownValue={humorFormData.source} placeHolder='Select Bundle Source'/>
             </div>
             <div className="divider"></div>
             <div className="p-4">
