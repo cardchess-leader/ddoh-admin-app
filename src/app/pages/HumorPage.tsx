@@ -199,15 +199,15 @@ const HumorPage: React.FC<HumorPageProps> = ({ password, isHttpRunning, setIsHtt
       {selectedDate &&
         <Box mb={4}>
           <span className="subheading">Choose Category</span>
-          <Dropdown options={HumorCategoryList.map(category => ({ label: category, value: category }))} onChange={handleCategoryChange} selectedDropdownValue={selectedCategory} />
+          <Dropdown options={HumorCategoryList.map(category => ({ label: category, value: category }))} onChange={handleCategoryChange} selectedDropdownValue={selectedCategory} placeHolder="Select Category" />
           <br />
         </Box>}
       {selectedDate &&
-      <Box mb={4}>
-        <span className="subheading">Select Default Source</span>
-        <Dropdown options={bundleList?.map(bundle => ({ label: bundle.title, value: bundle.uuid })) || [] } onChange={bundleUuid => setDefaultSource(bundleUuid)} selectedDropdownValue={defaultSource} />
-        <br />
-      </Box>}
+        <Box mb={4}>
+          <span className="subheading">Select Default Source</span>
+          <Dropdown options={bundleList?.map(bundle => ({ label: bundle.title, value: bundle.uuid })) || []} onChange={bundleUuid => setDefaultSource(bundleUuid)} selectedDropdownValue={defaultSource} placeHolder="Select Bundle Source" />
+          <br />
+        </Box>}
       {selectedDate && selectedCategory &&
         <Box mb={4}>
           <span className="subheading">Select Humors</span><button id='refresh' onClick={() => fetchUuids(selectedCategory || '')}>&#x1F503;</button>

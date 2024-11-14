@@ -7,7 +7,7 @@ import Dropdown from "./Dropdown";
 interface HumorDetailProps {
     submitType: 'create' | 'update';
     humorFormData: Humor;
-    updateHumorFormData: (key: HumorDataKey, value: string | number | boolean, arg?: string | number) => void
+    updateHumorFormData: (key: HumorDataKey, value: string | number | boolean, arg?: string | number) => void;
     handleSubmit: () => void;
     isHttpRunning: boolean;
     humorBundleList: Bundle[];
@@ -66,13 +66,13 @@ const HumorDetail: React.FC<HumorDetailProps> = ({ submitType, humorFormData, up
                     Category
                 </label>
                 <div className="flex-1">
-                    <Dropdown options={HumorCategoryList.map(category => ({label: category, value: category}))} onChange={(category) => updateHumorFormData('category', category)} selectedDropdownValue={humorFormData.category} />
+                    <Dropdown options={HumorCategoryList.map(category => ({ label: category, value: category }))} onChange={(category) => updateHumorFormData('category', category)} selectedDropdownValue={humorFormData.category} placeHolder='Select Category' />
                 </div>
             </div>
             <div className="divider"></div>
             <div className="mb-3 p-4 flex">
                 <label htmlFor="context" className="form-label">
-                    Context {invalid_field_list.includes('context') && <span style={{color: 'red'}}>*</span>}
+                    Context {invalid_field_list.includes('context') && <span style={{ color: 'red' }}>*</span>}
                 </label>
                 <textarea
                     className="form-control flex-1"
@@ -97,7 +97,7 @@ const HumorDetail: React.FC<HumorDetailProps> = ({ submitType, humorFormData, up
                                 id={`context_list#${index}`} // Making the id unique or omit if not needed
                                 name={`context_list#${index}`} // Optionally use unique names as well
                                 value={contextListItem}
-                                  onChange={(e) => updateHumorFormData('context_list', e.target.value, index)} // Assuming handleChange needs to track the index
+                                onChange={(e) => updateHumorFormData('context_list', e.target.value, index)} // Assuming handleChange needs to track the index
                                 rows={3}
                                 required
                             />
@@ -140,7 +140,7 @@ const HumorDetail: React.FC<HumorDetailProps> = ({ submitType, humorFormData, up
             </div>
             <div className="mb-3 p-4 flex">
                 <label htmlFor="release_date" className="form-label">
-                    Release Date {invalid_field_list.includes('release_date') && <span style={{color: 'red'}}>*</span>}
+                    Release Date {invalid_field_list.includes('release_date') && <span style={{ color: 'red' }}>*</span>}
                 </label>
                 <input
                     type="text"
@@ -170,7 +170,7 @@ const HumorDetail: React.FC<HumorDetailProps> = ({ submitType, humorFormData, up
             <div className="divider"></div>
             <div className="mb-3 p-4 flex">
                 <label htmlFor="sender" className="form-label">
-                    Sender {invalid_field_list.includes('sender') && <span style={{color: 'red'}}>*</span>}
+                    Sender {invalid_field_list.includes('sender') && <span style={{ color: 'red' }}>*</span>}
                 </label>
                 <input
                     type="text"
@@ -187,7 +187,7 @@ const HumorDetail: React.FC<HumorDetailProps> = ({ submitType, humorFormData, up
                 <label htmlFor="source" className="form-label">
                     Source
                 </label>
-                <Dropdown options={[{label: 'Daily Dose of Humors', value: 'Daily Dose of Humors'}, ...humorBundleList.map(bundle => ({ label: bundle.title, value: bundle.uuid }))]} onChange={(bundle_uuid) => updateHumorFormData('source', bundle_uuid)} selectedDropdownValue={humorFormData.source} />
+                <Dropdown options={[{ label: 'Daily Dose of Humors', value: 'Daily Dose of Humors' }, ...humorBundleList.map(bundle => ({ label: bundle.title, value: bundle.uuid }))]} onChange={(bundle_uuid) => updateHumorFormData('source', bundle_uuid)} selectedDropdownValue={humorFormData.source} placeHolder='Select Bundle Source' />
             </div>
             <div className="divider"></div>
             <div className="p-4">

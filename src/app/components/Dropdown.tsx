@@ -12,9 +12,10 @@ interface DropdownProps {
   options: readonly {label: string, value: string}[];
   onChange: (value: string) => void;
   selectedDropdownValue: string | null;
+  placeHolder: string;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ options, onChange, selectedDropdownValue }) => {
+const Dropdown: React.FC<DropdownProps> = ({ options, onChange, selectedDropdownValue, placeHolder }) => {
   // Define the type for selectedOption using SingleValue<Option>
   const handleChange = (selectedOption: SingleValue<Option>) => {
     // Check if selectedOption is not null before accessing its value
@@ -29,7 +30,7 @@ const Dropdown: React.FC<DropdownProps> = ({ options, onChange, selectedDropdown
     <Select
       options={options}
       onChange={handleChange}
-      placeholder="Select a Category"
+      placeholder={placeHolder}
       value={selectedOption}
     />
   );
