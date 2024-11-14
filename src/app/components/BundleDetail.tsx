@@ -78,7 +78,7 @@ const BundleDetail: React.FC<BundleDetailProps> = ({ bundleDetail, updateBundleD
                     Category
                 </label>
                 <div className="flex-1">
-                    <Dropdown options={HumorCategoryList.map(category => ({label: category, value: category}))} onChange={(category) => updateBundleDetail('category', category)} selectedDropdownValue={bundleDetail.category} />
+                    <Dropdown options={HumorCategoryList.map(category => ({label: category, value: category}))} onChange={(category) => updateBundleDetail('category', category)} selectedDropdownValue={bundleDetail.category} placeHolder='Choose Category'/>
                 </div>
             </div>
             <div className="divider"></div>
