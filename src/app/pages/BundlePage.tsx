@@ -83,6 +83,7 @@ const BundlePage: React.FC<BundlePageProps> = ({password, isHttpRunning, setIsHt
             console.error("Error fetching data:", error);
         } finally {
             setIsHttpRunning(false);
+            printBundleLikesCount(bundle.uuid);
         }
     }
 
@@ -103,6 +104,23 @@ const BundlePage: React.FC<BundlePageProps> = ({password, isHttpRunning, setIsHt
             console.error("Error fetching data:", error);
         } finally {
             setIsHttpRunning(false);
+            printBundleLikesCount(uuid);
+        }
+    }
+
+    const printBundleLikesCount = async (uuid: string) => {
+        try {
+            const response = await fetch(
+                `${firebaseFunctionUrl}/getBundleTotalLikes?uuid=${uuid}`
+            );
+            if (response.ok) {
+                const data = await response.json();
+                console.log(`Total likes count for bundle ${uuid} is: \n${data.totalLikes}`);
+            } else {
+                console.error("Failed to fetch total likes count.");
+            }
+        } catch (error) {
+            console.error("Error fetching total likes count.", error);
         }
     }
 
